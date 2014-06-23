@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearKeyGMP", "ClearKeyGMP\ClearKeyGMP.vcxproj", "{9304B332-0644-44E9-90BF-A18B424AE725}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearKeyGMP", "src\ClearKeyGMP.vcxproj", "{9304B332-0644-44E9-90BF-A18B424AE725}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
