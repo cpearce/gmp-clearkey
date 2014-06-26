@@ -91,8 +91,17 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
   }
 
   const GMPEncryptedBufferData* crypto = aInput->GetDecryptionData();
+  std::vector<uint8_t> buffer;
   if (crypto) {
-    LOG(L"Must decrypt audio buffer before decoding.");
+    const uint8_t* iv = crypto->IV();
+    uint32_t sz = crypto->IVSize();
+    Decryptor d;
+    if (!d.Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
+      LOG(L"Audio decryption error!");
+      // TODO: Report error...
+      return;
+    }
+    inBuffer = buffer.data();
   }
 
   hr = mDecoder->Input(inBuffer,
@@ -201,7 +210,7 @@ AudioDecoder::Drain()
 {
   return GMPNoErr;
 }
- 
+
 void
 AudioDecoder::DecodingComplete()
 {

@@ -35,7 +35,7 @@ public:
   virtual GMPVideoErr Reset() override;
 
   virtual GMPVideoErr Drain() override;
- 
+
   virtual void DecodingComplete() override;
 
 private:
@@ -54,5 +54,10 @@ private:
   AutoPtr<GMPMutex> mMutex;
   AutoPtr<WMFH264Decoder> mDecoder;
 
+  std::vector<uint8_t> mExtraData;
+  AVCDecoderConfigurationRecord mAVCC;
+  std::vector<uint8_t> mAnnexB;
+
   int32_t mNumInputTasks;
+  bool mSentExtraData;
 };

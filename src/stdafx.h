@@ -70,9 +70,9 @@
 #include "Utils.h"
 #include "WMFH264Decoder.h"
 #include "WMFAACDecoder.h"
-#include "VideoDecoder.h"
 #include "AudioDecoder.h"
 #include "ClearKeyGMP.h"
-
-
+#include "Decryptor.h"
+#include "chromium/avc.h"
+#include "VideoDecoder.h"
 

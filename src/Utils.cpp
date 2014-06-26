@@ -118,3 +118,12 @@ GetDefaultStride(IMFMediaType *aType, uint32_t* aOutStride)
 
   return hr;
 }
+
+
+void dump(const uint8_t* data, uint32_t len, const char* filename)
+{
+  FILE* f = 0;
+  fopen_s(&f, filename, "wb");
+  fwrite(data, len, 1, f);
+  fclose(f);
+}

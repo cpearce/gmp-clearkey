@@ -22,6 +22,7 @@ VideoDecoder::VideoDecoder(GMPVideoHost *aHostAPI)
   , mWorkerThread(nullptr)
   , mMutex(nullptr)
   , mNumInputTasks(0)
+  , mSentExtraData(false)
 {
 }
 
@@ -42,6 +43,15 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
 
   auto err = GMPCreateMutex(mMutex.Receive());
   ENSURE(GMP_SUCCEEDED(err), GMPVideoGenericErr);
+
+  mExtraData.insert(mExtraData.end(),
+                    aCodecSettings.mExtraData,
+                    aCodecSettings.mExtraData + aCodecSettings.mExtraDataLen);
+
+  if (!mAVCC.Parse(mExtraData) ||
+      !AVC::ConvertConfigToAnnexB(mAVCC, &mAnnexB)) {
+    return GMPVideoGenericErr;
+  }
 
   return GMPVideoNoErr;
 }
@@ -69,6 +79,8 @@ VideoDecoder::Decode(GMPVideoEncodedFrame* aInputFrame,
   return GMPVideoNoErr;
 }
 
+static const uint8_t kAnnexBDelimiter[] = { 0, 0, 0, 1 };
+
 void
 VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput,
                          const GMPCodecSpecificInfo& aCodecSpecificInfo)
@@ -93,12 +105,29 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput,
   }
 
   const GMPEncryptedBufferData* crypto = aInput->GetDecryptionData();
+  std::vector<uint8_t> buffer;
   if (crypto) {
-    LOG(L"Must decrypt video buffer before decoding.");
+    Decryptor d;
+    if (!d.Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
+      LOG(L"Video decryption error!");
+      // TODO: Report error...
+      return;
+    }
+    buffer.data();
+  } else {
+    buffer.insert(buffer.end(), inBuffer, inBuffer+aInput->Size());
   }
 
-  hr = mDecoder->Input(inBuffer,
-                       aInput->Size(),
+  AVC::ConvertFrameToAnnexB(4, &buffer);
+  if (aInput->FrameType() == kGMPKeyFrame) {
+    // We must send the SPS and PPS to Windows Media Foundation's decoder.
+    // Note: We do this *after* decryption, otherwise the subsample info
+    // would be incorrect.
+    buffer.insert(buffer.begin(), mAnnexB.begin(), mAnnexB.end());
+  }
+
+  hr = mDecoder->Input(buffer.data(),
+                       buffer.size(),
                        aInput->TimeStamp(),
                        aInput->CaptureTime());
 
@@ -154,7 +183,7 @@ VideoDecoder::ReturnOutput(IMFSample* aSample)
   ENSURE(SUCCEEDED(hr), /*void*/);
 
   GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::Decoded, vf));
- 
+
 }
 
 HRESULT
@@ -258,7 +287,7 @@ VideoDecoder::Drain()
 {
   return GMPVideoNoErr;
 }
- 
+
 void
 VideoDecoder::DecodingComplete()
 {

@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\cpearce\src\mozilla\purple\content\media\gmp\gmp-api;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);C:\Users\cpearce\src\mozilla\purple\content\media\gmp\gmp-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -86,6 +86,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioDecoder.h" />
+    <ClInclude Include="chromium\avc.h" />
+    <ClInclude Include="Decryptor.h" />
+    <ClInclude Include="openssl\aes.h" />
+    <ClInclude Include="openssl\aes_locl.h" />
+    <ClInclude Include="openssl\crypto.h" />
+    <ClInclude Include="openssl\e_os2.h" />
+    <ClInclude Include="openssl\modes.h" />
+    <ClInclude Include="openssl\modes_lcl.h" />
+    <ClInclude Include="openssl\opensslconf.h" />
+    <ClInclude Include="openssl\opensslv.h" />
+    <ClInclude Include="openssl\ossl_typ.h" />
+    <ClInclude Include="openssl\safestack.h" />
+    <ClInclude Include="openssl\stack.h" />
+    <ClInclude Include="openssl\symhacks.h" />
     <ClInclude Include="VideoDecoder.h" />
     <ClInclude Include="gmp-task-utils.h" />
     <ClInclude Include="stdafx.h" />
@@ -97,7 +111,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioDecoder.cpp" />
+    <ClCompile Include="chromium\avc.cc" />
     <ClCompile Include="ClearKeyGMP.cpp" />
+    <ClCompile Include="Decryptor.cpp" />
+    <ClCompile Include="openssl\aes_ctr.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="openssl\aes_x86core.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="openssl\ctr128.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="VideoDecoder.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

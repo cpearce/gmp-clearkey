@@ -94,7 +94,7 @@ public:
     : mPtr(aPtr)
   {
   }
-  
+
   ~AutoPtr() {
     if (mPtr) {
       delete mPtr;
@@ -120,7 +120,7 @@ public:
   Type* Get() const {
     return mPtr;
   }
-  
+
   Type* operator->() const {
     assert(mPtr);
     return Get();
@@ -169,3 +169,5 @@ public:
 private:
   GMPMutex* mMutex;
 };
+
+void dump(const uint8_t* data, uint32_t len, const char* filename);

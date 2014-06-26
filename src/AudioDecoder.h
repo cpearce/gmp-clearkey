@@ -31,7 +31,7 @@ public:
   virtual GMPErr Reset() override;
 
   virtual GMPErr Drain() override;
- 
+
   virtual void DecodingComplete() override;
 
 private:
