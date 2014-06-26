@@ -102,6 +102,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
       return;
     }
     inBuffer = buffer.data();
+    assert(buffer.size() == aInput->Size());
   }
 
   hr = mDecoder->Input(inBuffer,
@@ -133,8 +134,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
         // send us more data.
         GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::InputDataExhausted));
       }
-    }
-    if (FAILED(hr)) {
+    } else if (FAILED(hr)) {
       LOG(L"AudioDecoder::DecodeTask() output failed hr=0x%x\n", hr);
     }
   }
