@@ -70,7 +70,7 @@ WMFH264Decoder::Init()
 
   hr = SetDecoderOutputType();
   ENSURE(SUCCEEDED(hr), hr);
-  
+
   hr = SendMFTMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, 0);
   ENSURE(SUCCEEDED(hr), hr);
 
@@ -155,7 +155,7 @@ WMFH264Decoder::SetDecoderInputType()
 
   hr = type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_MixedInterlaceOrProgressive);
   ENSURE(SUCCEEDED(hr), hr);
-  
+
   hr = mDecoder->SetInputType(0, type, 0);
   ENSURE(SUCCEEDED(hr), hr);
 
@@ -237,7 +237,7 @@ WMFH264Decoder::CreateInputSample(const uint8_t* aData,
 
   hr = sample->SetSampleTime(UsecsToHNs(aTimestamp));
   ENSURE(SUCCEEDED(hr), hr);
-  
+
   sample->SetSampleDuration(UsecsToHNs(aDuration));
 
   *aOutSample = sample.Detach();
@@ -295,7 +295,7 @@ WMFH264Decoder::GetOutputSample(IMFSample** aOutSample)
     hr = SetDecoderOutputType();
     ENSURE(SUCCEEDED(hr), hr);
 
-    return GetOutputSample(aOutSample);  
+    return GetOutputSample(aOutSample);
   } else if (hr == MF_E_TRANSFORM_NEED_MORE_INPUT || !sample) {
     return MF_E_TRANSFORM_NEED_MORE_INPUT;
   }
@@ -356,4 +356,4 @@ WMFH264Decoder::Reset()
 
   return S_OK;
 }
- 
+

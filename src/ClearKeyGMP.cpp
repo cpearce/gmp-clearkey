@@ -28,7 +28,7 @@ GMPErr
 GMPCreateThread(GMPThread** aThread)
 {
   assert(sPlatformAPI);
-  return sPlatformAPI->createthread(aThread);  
+  return sPlatformAPI->createthread(aThread);
 }
 
 GMPErr

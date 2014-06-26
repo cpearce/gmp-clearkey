@@ -13,6 +13,7 @@
 
 class gmp_task_args_base : public GMPTask {
 public:
+  virtual void Destroy() { delete this; }
   virtual void Run() = 0;
 };
 

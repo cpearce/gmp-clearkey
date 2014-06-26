@@ -40,7 +40,7 @@ AACAudioSpecificConfigToUserData(BYTE* aAudioSpecConfig, UINT32 aConfigLength,
   // Contains the portion of the HEAACWAVEINFO structure that appears
   // after the WAVEFORMATEX structure (that is, after the wfx member).
   // This is followed by the AudioSpecificConfig() data, as defined
-  // by ISO/IEC 14496-3. 
+  // by ISO/IEC 14496-3.
   // ...
   // The length of the AudioSpecificConfig() data is 2 bytes for AAC-LC
   // or HE-AAC with implicit signaling of SBR/PS. It is more than 2 bytes
@@ -48,7 +48,7 @@ AACAudioSpecificConfigToUserData(BYTE* aAudioSpecConfig, UINT32 aConfigLength,
   //
   // The value of audioObjectType as defined in AudioSpecificConfig()
   // must be 2, indicating AAC-LC. The value of extensionAudioObjectType
-  // must be 5 for SBR or 29 for PS. 
+  // must be 5 for SBR or 29 for PS.
   //
   // See:
   // http://msdn.microsoft.com/en-us/library/windows/desktop/dd742784%28v=vs.85%29.aspx
@@ -109,7 +109,7 @@ WMFAACDecoder::Init(int32_t aChannelCount,
 
   hr = SetDecoderOutputType();
   ENSURE(SUCCEEDED(hr), hr);
-  
+
   hr = SendMFTMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, 0);
   ENSURE(SUCCEEDED(hr), hr);
 
@@ -145,7 +145,7 @@ WMFAACDecoder::SetDecoderInputType(int32_t aChannelCount,
 
   hr = type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, aSampleRate);
   ENSURE(SUCCEEDED(hr), hr);
-  
+
   hr = type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, aChannelCount);
   ENSURE(SUCCEEDED(hr), hr);
 
@@ -232,7 +232,7 @@ WMFAACDecoder::CreateInputSample(const uint8_t* aData,
 
   hr = sample->SetSampleTime(UsecsToHNs(aTimestamp));
   ENSURE(SUCCEEDED(hr), hr);
-  
+
   *aOutSample = sample.Detach();
 
   return S_OK;
@@ -287,7 +287,7 @@ WMFAACDecoder::GetOutputSample(IMFSample** aOutSample)
     hr = SetDecoderOutputType();
     ENSURE(SUCCEEDED(hr), hr);
 
-    return GetOutputSample(aOutSample);  
+    return GetOutputSample(aOutSample);
   } else if (hr == MF_E_TRANSFORM_NEED_MORE_INPUT || !sample) {
     return MF_E_TRANSFORM_NEED_MORE_INPUT;
   }

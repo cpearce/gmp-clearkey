@@ -44,7 +44,7 @@ private:
   HRESULT SetDecoderInputType();
   HRESULT SetDecoderOutputType();
   HRESULT SendMFTMessage(MFT_MESSAGE_TYPE aMsg, UINT32 aData);
-  
+
   HRESULT CreateInputSample(const uint8_t* aData,
                             uint32_t aDataSize,
                             Microseconds aTimestamp,
