@@ -66,9 +66,16 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
 }
 
 void
-Decryptor::ReleaseSession(uint32_t aPromiseId,
-                          const char* aSessionId,
-                          uint32_t aSessionIdLength)
+Decryptor::CloseSession(uint32_t aPromiseId,
+                        const char* aSessionId,
+                        uint32_t aSessionIdLength)
+{
+}
+
+void
+Decryptor::RemoveSession(uint32_t aPromiseId,
+                         const char* aSessionId,
+                         uint32_t aSessionIdLength)
 {
 }
 
