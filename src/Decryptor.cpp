@@ -2,6 +2,83 @@
 
 using std::vector;
 
+static Decryptor* instance = nullptr;
+
+/* static */
+Decryptor*
+Decryptor::Get()
+{
+  return instance;
+}
+
+/* static */
+void
+Decryptor::Create(GMPDecryptorHost* aHost)
+{
+  assert(!Get());
+  instance = new Decryptor(aHost);
+}
+
+Decryptor::Decryptor(GMPDecryptorHost* aHost)
+  : mHost(aHost)
+  , mNum(0)
+  , mDecryptNumber(0)
+{
+  memset(&mEcount, 0, AES_BLOCK_SIZE);
+}
+
+void
+Decryptor::Init(GMPDecryptorCallback* aCallback)
+{
+  mCallback = aCallback;
+}
+
+void
+Decryptor::CreateSession(uint32_t aPromiseId,
+                         const char* aInitDataType,
+                         uint32_t aInitDataTypeSize,
+                         const uint8_t* aInitData,
+                         uint32_t aInitDataSize,
+                         GMPSessionType aSessionType)
+{
+  std::string sid = "FakeSessionId";
+  mCallback->OnResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  std::string msg = "MessageForYouSir!";
+  mCallback->OnSessionMessage(sid.c_str(), sid.size(),
+                              (const uint8_t*)msg.c_str(), msg.size(),
+                              "", 0);
+}
+
+void
+Decryptor::LoadSession(uint32_t aPromiseId,
+                       const char* aSessionId,
+                       uint32_t aSessionIdLength)
+{
+}
+
+void
+Decryptor::UpdateSession(uint32_t aPromiseId,
+                         const char* aSessionId,
+                         uint32_t aSessionIdLength,
+                         const uint8_t* aResponse,
+                         uint32_t aResponseSize)
+{
+}
+
+void
+Decryptor::ReleaseSession(uint32_t aPromiseId,
+                          const char* aSessionId,
+                          uint32_t aSessionIdLength)
+{
+}
+
+void
+Decryptor::SetServerCertificate(uint32_t aPromiseId,
+                                const uint8_t* aServerCert,
+                                uint32_t aServerCertSize)
+{
+}
+
 static const uint32_t KEY_LEN = 16;
 static const uint8_t sKey[KEY_LEN] = {
   0x1a, 0x8a, 0x20, 0x95,
@@ -10,12 +87,6 @@ static const uint8_t sKey[KEY_LEN] = {
   0x7b, 0xae, 0x20, 0x82
 };
 
-Decryptor::Decryptor()
-  : mNum(0)
-  , mDecryptNumber(0)
-{
-  memset(&mEcount, 0, AES_BLOCK_SIZE);
-}
 
 bool
 Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
@@ -27,9 +98,6 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
     LOG(L"Failed to set decryption key!\n");
     return false;
   }
-
-  std::string f = "c:\\Users\\cpearce\\eme\\gmp\\predecrypt\\" + std::to_string(mDecryptNumber);
-  dump(aEncryptedBuffer, aLength, f.c_str());
 
   // Make one pass copying all encrypted data into a single buffer, then
   // another pass to decrypt it. Then another pass copying it into the
@@ -90,9 +158,6 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
     assert(index <= aLength);
     assert(decrypted_index <= aLength);
   }
-
-  f = "c:\\Users\\cpearce\\eme\\gmp\\decrypted\\" + std::to_string(mDecryptNumber);
-  dump(aOutDecrypted.data(), aOutDecrypted.size(), f.c_str());
 
   mDecryptNumber++;
 

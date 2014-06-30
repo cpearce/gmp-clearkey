@@ -95,8 +95,10 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
   if (crypto) {
     const uint8_t* iv = crypto->IV();
     uint32_t sz = crypto->IVSize();
-    Decryptor d;
-    if (!d.Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
+    // Plugin host should have set up its decryptor/key sessions
+    // before trying to decode!
+    assert(Decryptor::Get());
+    if (!Decryptor::Get()->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
       LOG(L"Audio decryption error!");
       // TODO: Report error...
       return;

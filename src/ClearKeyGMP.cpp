@@ -78,13 +78,21 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
 GMP_EXPORT GMPErr
 GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 {
+  if (!strcmp(aApiName, "eme-decrypt")) {
+    if (!Decryptor::Get()) {
+      Decryptor::Create(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
+    }
+    *aPluginApi = Decryptor::Get();
+    return GMPNoErr;
+  }
+
   if (!strcmp(aApiName, "decode-video")) {
-   *aPluginApi = new VideoDecoder(static_cast<GMPVideoHost*>(aHostAPI));
+   *aPluginApi = new VideoDecoder(reinterpret_cast<GMPVideoHost*>(aHostAPI));
    return GMPNoErr;
   }
 
   if (!strcmp(aApiName, "decode-audio")) {
-   *aPluginApi = new AudioDecoder(static_cast<GMPAudioHost*>(aHostAPI));
+   *aPluginApi = new AudioDecoder(reinterpret_cast<GMPAudioHost*>(aHostAPI));
    return GMPNoErr;
   }
 

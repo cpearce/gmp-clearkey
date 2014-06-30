@@ -107,8 +107,10 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput,
   const GMPEncryptedBufferData* crypto = aInput->GetDecryptionData();
   std::vector<uint8_t> buffer;
   if (crypto) {
-    Decryptor d;
-    if (!d.Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
+    // Plugin host should have set up its decryptor/key sessions
+    // before trying to decode!
+    assert(Decryptor::Get());
+    if (!Decryptor::Get()->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
       LOG(L"Video decryption error!");
       // TODO: Report error...
       return;
