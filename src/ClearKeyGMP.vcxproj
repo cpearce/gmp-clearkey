@@ -87,7 +87,19 @@
   <ItemGroup>
     <ClInclude Include="AudioDecoder.h" />
     <ClInclude Include="chromium\avc.h" />
+    <ClInclude Include="chromium\json_web_key.h" />
     <ClInclude Include="Decryptor.h" />
+    <ClInclude Include="json\autolink.h" />
+    <ClInclude Include="json\config.h" />
+    <ClInclude Include="json\features.h" />
+    <ClInclude Include="json\forwards.h" />
+    <ClInclude Include="json\json.h" />
+    <ClInclude Include="json\json_batchallocator.h" />
+    <ClInclude Include="json\reader.h" />
+    <ClInclude Include="json\value.h" />
+    <ClInclude Include="json\writer.h" />
+    <ClInclude Include="modp_b64\modp_b64.h" />
+    <ClInclude Include="modp_b64\modp_b64_data.h" />
     <ClInclude Include="openssl\aes.h" />
     <ClInclude Include="openssl\aes_locl.h" />
     <ClInclude Include="openssl\crypto.h" />
@@ -112,8 +124,23 @@
   <ItemGroup>
     <ClCompile Include="AudioDecoder.cpp" />
     <ClCompile Include="chromium\avc.cc" />
+    <ClCompile Include="chromium\json_web_key.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="ClearKeyGMP.cpp" />
     <ClCompile Include="Decryptor.cpp" />
+    <ClCompile Include="json\json_reader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="json\json_value.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="json\json_writer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="modp_b64\modp_b64.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="openssl\aes_ctr.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>

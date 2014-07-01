@@ -112,7 +112,7 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput,
     assert(Decryptor::Get());
     if (!Decryptor::Get()->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
       LOG(L"Video decryption error!");
-      // TODO: Report error...
+      // TODO: Report no key...
       return;
     }
     buffer.data();

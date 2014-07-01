@@ -41,11 +41,12 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
-  std::string sid = "FakeSessionId";
+  static uint32_t sessionNum = 1;
+
+  std::string sid = std::to_string(sessionNum++);
   mCallback->OnResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
-  std::string msg = "MessageForYouSir!";
   mCallback->OnSessionMessage(sid.c_str(), sid.size(),
-                              (const uint8_t*)msg.c_str(), msg.size(),
+                              aInitData, aInitDataSize,
                               "", 0);
 }
 
@@ -63,12 +64,33 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
                          const uint8_t* aResponse,
                          uint32_t aResponseSize)
 {
+  eme_key_set keys;
+  ExtractKeysFromJWKSet(std::string((const char*)aResponse, aResponseSize), keys);
+  for (auto itr = keys.begin(); itr != keys.end(); itr++) {
+    eme_key_id id = itr->first;
+    eme_key key = itr->second;
+    mKeySet[id] = key;
+    mCallback->OnKeyIdUsable(aSessionId, aSessionIdLength, (uint8_t*)id.c_str(), id.length());
+  }
 }
 
 void
-Decryptor::ReleaseSession(uint32_t aPromiseId,
-                          const char* aSessionId,
-                          uint32_t aSessionIdLength)
+Decryptor::CloseSession(uint32_t aPromiseId,
+                        const char* aSessionId,
+                        uint32_t aSessionIdLength)
+{
+  // Drop keys for session_id.
+  // G. implementation:
+  // https://code.google.com/p/chromium/codesearch#chromium/src/media/cdm/aes_decryptor.cc&sq=package:chromium&q=ReleaseSession&l=300&type=cs
+  mKeySet.clear();
+  //mHost->OnSessionClosed(session_id);
+  //mActiveSessionId = ~0;
+}
+
+void
+Decryptor::RemoveSession(uint32_t aPromiseId,
+                         const char* aSessionId,
+                         uint32_t aSessionIdLength)
 {
 }
 
@@ -79,22 +101,19 @@ Decryptor::SetServerCertificate(uint32_t aPromiseId,
 {
 }
 
-static const uint32_t KEY_LEN = 16;
-static const uint8_t sKey[KEY_LEN] = {
-  0x1a, 0x8a, 0x20, 0x95,
-  0xe4, 0xde, 0xb2, 0xd2,
-  0x9e, 0xc8, 0x16, 0xac,
-  0x7b, 0xae, 0x20, 0x82
-};
-
-
 bool
 Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
                    const uint32_t aLength,
                    const GMPEncryptedBufferData* aCryptoData,
                    vector<uint8_t>& aOutDecrypted)
 {
-  if (AES_set_encrypt_key((uint8_t*)sKey, KEY_LEN*8, &mKey)) {
+  std::string kid((const char*)aCryptoData->KeyId(), aCryptoData->KeyIdSize());
+  if (mKeySet.find(kid) == mKeySet.end()) {
+    // No key for that id.
+    return false;
+  }
+  const std::string key = mKeySet[kid];
+  if (AES_set_encrypt_key((uint8_t*)key.c_str(), 128, &mKey)) {
     LOG(L"Failed to set decryption key!\n");
     return false;
   }

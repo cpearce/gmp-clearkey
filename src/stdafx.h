@@ -67,6 +67,8 @@
 #define GMP_EXPORT __declspec(dllimport)
 #endif
 
+#include "chromium/json_web_key.h"
+
 #include "Utils.h"
 #include "WMFH264Decoder.h"
 #include "WMFAACDecoder.h"

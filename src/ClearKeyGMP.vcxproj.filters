@@ -19,6 +19,12 @@
     <Filter Include="Header Files\chromium">
       <UniqueIdentifier>{d5e2ecf3-bb7b-4eb9-921d-c986da28cbe8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{aab3ca2b-9ae1-4ae2-9d20-6558a40eaf74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="chromium">
+      <UniqueIdentifier>{f3a6e910-2f0e-45e8-945e-b8cdf2c59a6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -93,6 +99,42 @@
     <ClInclude Include="chromium\avc.h">
       <Filter>Header Files\chromium</Filter>
     </ClInclude>
+    <ClInclude Include="json\json_batchallocator.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\reader.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\value.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\writer.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\autolink.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\config.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\features.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\forwards.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="modp_b64\modp_b64.h">
+      <Filter>chromium</Filter>
+    </ClInclude>
+    <ClInclude Include="modp_b64\modp_b64_data.h">
+      <Filter>chromium</Filter>
+    </ClInclude>
+    <ClInclude Include="chromium\json_web_key.h">
+      <Filter>chromium</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -133,6 +175,21 @@
     </ClCompile>
     <ClCompile Include="chromium\avc.cc">
       <Filter>Header Files\chromium</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_reader.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_value.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_writer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="modp_b64\modp_b64.cc">
+      <Filter>chromium</Filter>
+    </ClCompile>
+    <ClCompile Include="chromium\json_web_key.cpp">
+      <Filter>chromium</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

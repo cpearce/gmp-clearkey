@@ -56,9 +56,14 @@ public:
                              uint32_t aResponseSize) override;
 
   // Releases the resources (keys) for the specified session.
-  virtual void ReleaseSession(uint32_t aPromiseId,
-                              const char* aSessionId,
-                              uint32_t aSessionIdLength) override;
+  virtual void CloseSession(uint32_t aPromiseId,
+                            const char* aSessionId,
+                            uint32_t aSessionIdLength) override;
+
+  // Removes the resources (keys) for the specified session.
+  virtual void RemoveSession(uint32_t aPromiseId,
+                             const char* aSessionId,
+                             uint32_t aSessionIdLength) override;
 
   // Resolve/reject promise on completion.
   virtual void SetServerCertificate(uint32_t aPromiseId,
@@ -76,4 +81,6 @@ private:
   unsigned int mNum;
   unsigned char mEcount[AES_BLOCK_SIZE];
   uint32_t mDecryptNumber;
+  eme_key_set mKeySet;
+
 };
