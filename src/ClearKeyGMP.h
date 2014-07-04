@@ -18,3 +18,9 @@ GMPErr GMPCreateThread(GMPThread** aThread);
 GMPErr GMPRunOnMainThread(GMPTask* aTask);
 GMPErr GMPSyncRunOnMainThread(GMPTask* aTask);
 GMPErr GMPCreateMutex(GMPMutex** aMutex);
+GMPErr GMPOpenRecord(const char* aName,
+                     uint32_t aNameLength,
+                     GMPRecord** aOutRecord,
+                     GMPRecordClient* aClient);
+GMPErr GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS);
+GMPErr GMPGetCurrentTime(GMPTimestamp* aOutTime);

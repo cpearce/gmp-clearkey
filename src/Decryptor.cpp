@@ -34,6 +34,68 @@ Decryptor::Init(GMPDecryptorCallback* aCallback)
 }
 
 void
+Decryptor::SessionIdClient::Init(GMPRecord* aRecord, GMPTask* aContinuation)
+{
+  mId = 0;
+  mRecord = aRecord;
+  mContinuation = aContinuation;
+  auto err = mRecord->Open();
+  assert(GMP_SUCCEEDED(err));
+}
+
+void
+Decryptor::SessionIdClient::OnOpenComplete(GMPErr aStatus)
+{
+  assert(GMP_SUCCEEDED(aStatus));
+  if (GMP_SUCCEEDED(aStatus)) {
+    mRecord->Read();
+  }
+}
+
+void
+Decryptor::SessionIdClient::OnReadComplete(GMPErr aStatus,
+                                           const uint8_t* aData,
+                                           uint32_t aDataSize)
+{
+  if (aDataSize == 4) {
+    mId = *((uint32_t*)(aData));
+  }
+  uint32_t nextId = mId + 1;
+  mRecord->Write((uint8_t*)&nextId, 4);
+  GMPRunOnMainThread(mContinuation);
+  mContinuation = nullptr;
+}
+
+void
+Decryptor::SessionIdClient::OnWriteComplete(GMPErr aStatus)
+{
+  mRecord->Close();
+}
+
+void
+Decryptor::SessionIdReady(uint32_t aPromiseId,
+                          uint32_t aSessionId,
+                          const uint8_t* aInitData,
+                          uint32_t aInitDataSize)
+{
+  std::string sid = std::to_string(aSessionId);
+  mCallback->OnResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  mCallback->OnSessionMessage(sid.c_str(), sid.size(),
+                              aInitData, aInitDataSize,
+                              "", 0);
+
+  std::string msg = "Message for you sir! (Sent from my GMPTask)";
+  GMPTimestamp t = 0;
+  auto err = GMPGetCurrentTime(&t);
+  if (GMP_SUCCEEDED(err)) {
+    msg += " time=" + std::to_string(t);
+  }
+  GMPTask* task = new MessageTask(mCallback, sid, msg);
+
+  GMPSetTimer(task, 3000);
+}
+
+void
 Decryptor::CreateSession(uint32_t aPromiseId,
                          const char* aInitDataType,
                          uint32_t aInitDataTypeSize,
@@ -41,13 +103,22 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
+#ifdef INCREASING_SESSION_ID
   static uint32_t sessionNum = 1;
-
-  std::string sid = std::to_string(sessionNum++);
-  mCallback->OnResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
-  mCallback->OnSessionMessage(sid.c_str(), sid.size(),
-                              aInitData, aInitDataSize,
-                              "", 0);
+  SessionIdReady(aPromiseId, sessionNum++);
+#else
+  const char* sid = "sessionid";
+  GMPRecord* record = nullptr;
+  auto err = GMPOpenRecord(sid, strlen(sid), &record, &mSessionIdClient);
+  if (GMP_SUCCEEDED(err)) {
+    auto ready = new SessionIdReadyTask(this,
+                                        aPromiseId,
+                                        &mSessionIdClient,
+                                        aInitData,
+                                        aInitDataSize);
+    mSessionIdClient.Init(record, ready);
+  }
+#endif
 }
 
 void

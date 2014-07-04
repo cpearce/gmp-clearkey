@@ -52,6 +52,27 @@ GMPCreateMutex(GMPMutex** aMutex)
   return sPlatformAPI->createmutex(aMutex);
 }
 
+GMPErr
+GMPOpenRecord(const char* aName,
+              uint32_t aNameLength,
+              GMPRecord** aOutRecord,
+              GMPRecordClient* aClient)
+{
+  return sPlatformAPI->createrecord(aName, aNameLength, aOutRecord, aClient);
+}
+
+GMPErr
+GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS)
+{
+  return sPlatformAPI->settimer(aTask, aTimeoutMS);
+}
+
+GMPErr
+GMPGetCurrentTime(GMPTimestamp* aOutTime)
+{
+  return sPlatformAPI->getcurrenttime(aOutTime);
+}
+
 extern "C" {
 
 HMODULE h264DecoderModule = 0;
