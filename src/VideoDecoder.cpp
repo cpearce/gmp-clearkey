@@ -32,6 +32,7 @@ VideoDecoder::~VideoDecoder()
 
 GMPVideoErr
 VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
+                         const GMPUint8Array* aCodecSpecific,
                          GMPVideoDecoderCallback* aCallback,
                          int32_t aCoreCount)
 {
@@ -45,8 +46,8 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
   ENSURE(GMP_SUCCEEDED(err), GMPVideoGenericErr);
 
   mExtraData.insert(mExtraData.end(),
-                    aCodecSettings.mExtraData,
-                    aCodecSettings.mExtraData + aCodecSettings.mExtraDataLen);
+                    aCodecSpecific->Data(),
+                    aCodecSpecific->Data() + aCodecSpecific->Size());
 
   if (!mAVCC.Parse(mExtraData) ||
       !AVC::ConvertConfigToAnnexB(mAVCC, &mAnnexB)) {
@@ -131,7 +132,7 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput,
   hr = mDecoder->Input(buffer.data(),
                        buffer.size(),
                        aInput->TimeStamp(),
-                       aInput->CaptureTime());
+                       aInput->Duration());
 
   // We must delete the input sample!
   GMPSyncRunOnMainThread(WrapTask(aInput, &GMPVideoEncodedFrame::Destroy));
@@ -272,8 +273,7 @@ VideoDecoder::SampleToVideoFrame(IMFSample* aSample,
 
   hr = aSample->GetSampleDuration(&hns);
   ENSURE(SUCCEEDED(hr), hr);
-  // HACK: Set the render time as the duration. Need to fix the API.
-  aVideoFrame->SetRenderTime_ms(HNsToUsecs(hns));
+  aVideoFrame->SetDuration(HNsToUsecs(hns));
 
   return S_OK;
 }

@@ -24,6 +24,7 @@ public:
   virtual ~VideoDecoder();
 
   virtual GMPVideoErr InitDecode(const GMPVideoCodec& aCodecSettings,
+                                 const GMPUint8Array* aCodecSpecific,
                                  GMPVideoDecoderCallback* aCallback,
                                  int32_t aCoreCount) override;
 

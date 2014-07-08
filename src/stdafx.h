@@ -59,6 +59,7 @@
 #include "gmp-audio-decode.h"
 #include "gmp-audio-samples.h"
 #include "gmp-decryption.h"
+#include "gmp-async-shutdown.h"
 
 
 #ifdef CLEARKEYGMP_EXPORTS
