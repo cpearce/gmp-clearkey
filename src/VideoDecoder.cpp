@@ -30,9 +30,10 @@ VideoDecoder::~VideoDecoder()
 {
 }
 
-GMPVideoErr
+GMPErr
 VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
-                         const GMPUint8Array* aCodecSpecific,
+                         const uint8_t* aCodecSpecific,
+                         uint32_t aCodecSpecificLength,
                          GMPVideoDecoderCallback* aCallback,
                          int32_t aCoreCount)
 {
@@ -40,51 +41,59 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
   assert(mCallback);
   mDecoder = new WMFH264Decoder();
   HRESULT hr = mDecoder->Init();
-  ENSURE(SUCCEEDED(hr), GMPVideoGenericErr);
+  ENSURE(SUCCEEDED(hr), GMPGenericErr);
 
   auto err = GMPCreateMutex(mMutex.Receive());
-  ENSURE(GMP_SUCCEEDED(err), GMPVideoGenericErr);
+  ENSURE(GMP_SUCCEEDED(err), GMPGenericErr);
 
   mExtraData.insert(mExtraData.end(),
-                    aCodecSpecific->Data(),
-                    aCodecSpecific->Data() + aCodecSpecific->Size());
+                    aCodecSpecific,
+                    aCodecSpecific + aCodecSpecificLength);
 
   if (!mAVCC.Parse(mExtraData) ||
       !AVC::ConvertConfigToAnnexB(mAVCC, &mAnnexB)) {
-    return GMPVideoGenericErr;
+    return GMPGenericErr;
   }
 
-  return GMPVideoNoErr;
+  return GMPNoErr;
 }
 
-GMPVideoErr
+GMPErr
 VideoDecoder::Decode(GMPVideoEncodedFrame* aInputFrame,
                      bool aMissingFrames,
-                     const GMPCodecSpecificInfo& aCodecSpecificInfo,
+                     const uint8_t* aCodecSpecificInfo,
+                     uint32_t aCodecSpecificInfoLength,
                      int64_t aRenderTimeMs)
 {
+  if (aInputFrame->BufferType() != GMP_BufferLength32) {
+    // Gecko should only send frames with 4 byte NAL sizes to GMPs.
+    return GMPGenericErr;
+  }
+
   if (!mWorkerThread) {
     GMPCreateThread(mWorkerThread.Receive());
     if (!mWorkerThread) {
-      return GMPVideoAllocErr;
+      return GMPAllocErr;
     }
   }
   {
     AutoLock lock(mMutex);
     mNumInputTasks++;
   }
+
+  // Note: we don't need the codec specific info on a per-frame basis.
+  // It's mostly useful for WebRTC use cases.
+
   mWorkerThread->Post(WrapTask(this,
                                &VideoDecoder::DecodeTask,
-                               aInputFrame,
-                               aCodecSpecificInfo));
-  return GMPVideoNoErr;
+                               aInputFrame));
+  return GMPNoErr;
 }
 
 static const uint8_t kAnnexBDelimiter[] = { 0, 0, 0, 1 };
 
 void
-VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput,
-                         const GMPCodecSpecificInfo& aCodecSpecificInfo)
+VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput)
 {
   HRESULT hr;
 
@@ -278,16 +287,16 @@ VideoDecoder::SampleToVideoFrame(IMFSample* aSample,
   return S_OK;
 }
 
-GMPVideoErr
+GMPErr
 VideoDecoder::Reset()
 {
-  return GMPVideoNoErr;
+  return GMPNoErr;
 }
 
-GMPVideoErr
+GMPErr
 VideoDecoder::Drain()
 {
-  return GMPVideoNoErr;
+  return GMPNoErr;
 }
 
 void

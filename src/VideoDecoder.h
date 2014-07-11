@@ -23,26 +23,27 @@ public:
 
   virtual ~VideoDecoder();
 
-  virtual GMPVideoErr InitDecode(const GMPVideoCodec& aCodecSettings,
-                                 const GMPUint8Array* aCodecSpecific,
-                                 GMPVideoDecoderCallback* aCallback,
-                                 int32_t aCoreCount) override;
+  virtual GMPErr InitDecode(const GMPVideoCodec& aCodecSettings,
+                            const uint8_t* aCodecSpecific,
+                            uint32_t aCodecSpecificLength,
+                            GMPVideoDecoderCallback* aCallback,
+                            int32_t aCoreCount) override;
 
-  virtual GMPVideoErr Decode(GMPVideoEncodedFrame* aInputFrame,
-                             bool aMissingFrames,
-                             const GMPCodecSpecificInfo& aCodecSpecificInfo,
-                             int64_t aRenderTimeMs = -1);
+  virtual GMPErr Decode(GMPVideoEncodedFrame* aInputFrame,
+                        bool aMissingFrames,
+                        const uint8_t* aCodecSpecific,
+                        uint32_t aCodecSpecificLength,
+                        int64_t aRenderTimeMs = -1);
 
-  virtual GMPVideoErr Reset() override;
+  virtual GMPErr Reset() override;
 
-  virtual GMPVideoErr Drain() override;
+  virtual GMPErr Drain() override;
 
   virtual void DecodingComplete() override;
 
 private:
 
-  void DecodeTask(GMPVideoEncodedFrame* aInputFrame,
-                  const GMPCodecSpecificInfo& aCodecSpecificInfo);
+  void DecodeTask(GMPVideoEncodedFrame* aInputFrame);
 
   void ReturnOutput(IMFSample* aSample);
 
