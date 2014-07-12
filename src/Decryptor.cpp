@@ -143,6 +143,13 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
     mKeySet[id] = key;
     mCallback->OnKeyIdUsable(aSessionId, aSessionIdLength, (uint8_t*)id.c_str(), id.length());
   }
+
+  std::string msg = "ClearKeyGMP says UpdateSession is throwing fake error/exception";
+  mCallback->OnSessionError(aSessionId, aSessionIdLength,
+                            kGMPInvalidStateError,
+                            42,
+                            msg.c_str(),
+                            msg.size());
 }
 
 void
