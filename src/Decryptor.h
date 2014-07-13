@@ -70,54 +70,14 @@ public:
                                     const uint8_t* aServerCert,
                                     uint32_t aServerCertSize) override;
 
+  void SessionIdReady(uint32_t aPromiseId,
+                    uint32_t aSessionId,
+                    const std::vector<uint8_t>& aInitData);
+
+  void SendSessionMessage(const std::string& aSessionId,
+                          const std::string& aMessage);
 private:
-
-  class SessionIdClient : public GMPRecordClient {
-  public:
-    void Init(GMPRecord* aRecord, GMPTask* aContinuation);
-
-    virtual void OnOpenComplete(GMPErr aStatus) override;
-    virtual void OnReadComplete(GMPErr aStatus,
-                                const uint8_t* aData,
-                                uint32_t aDataSize) override;
-    virtual void OnWriteComplete(GMPErr aStatus) override;
-
-    uint32_t Id() { return mId; }
-
-  private:
-    GMPDecryptorHost* mHost;
-    GMPRecord* mRecord;
-    GMPTask* mContinuation;
-    uint32_t mId;
-  };
-
-  class SessionIdReadyTask : public GMPTask {
-  public:
-    SessionIdReadyTask(Decryptor* aDecryptor,
-                       uint32_t aPromiseId,
-                       SessionIdClient* aClient,
-                       const uint8_t* aInitData,
-                       uint32_t aInitDataSize)
-      : mDecryptor(aDecryptor)
-      , mPromiseId(aPromiseId)
-      , mClient(aClient)
-    {
-      mInitData.insert(mInitData.end(), aInitData, aInitData + aInitDataSize);
-    }
-    virtual void Destroy() override {
-      delete this;
-    }
-    virtual void Run() override {
-      mDecryptor->SessionIdReady(mPromiseId,
-                                 mClient->Id(),
-                                 mInitData.data(),
-                                 mInitData.size());
-    }
-    Decryptor* mDecryptor;
-    uint32_t mPromiseId;
-    SessionIdClient* mClient;
-    std::vector<uint8_t> mInitData;
-  };
+  GMPDecryptorCallback* mCallback;
 
   class MessageTask : public GMPTask {
   public:
@@ -142,21 +102,13 @@ private:
     std::string mMessage;
   };
 
-  void SessionIdReady(uint32_t aPromiseId,
-                      uint32_t aSessionId,
-                      const uint8_t* aInitData,
-                      uint32_t aInitDataSize);
-
   Decryptor(GMPDecryptorHost* aHost);
 
   GMPDecryptorHost* mHost;
-  GMPDecryptorCallback* mCallback;
 
   AES_KEY mKey;
   unsigned int mNum;
   unsigned char mEcount[AES_BLOCK_SIZE];
   uint32_t mDecryptNumber;
   eme_key_set mKeySet;
-
-  SessionIdClient mSessionIdClient;
 };

@@ -73,77 +73,7 @@ GMPGetCurrentTime(GMPTimestamp* aOutTime)
   return sPlatformAPI->getcurrenttime(aOutTime);
 }
 
-class FinishShutdownTask : public GMPTask {
-public:
-  FinishShutdownTask(GMPAsyncShutdownHost* aHost)
-    : mHost(aHost)
-  {}
 
-  void Run() override {
-    mHost->ShutdownComplete();
-  }
-
-  void Destroy() override {
-    delete this;
-  }
-private:
-  GMPAsyncShutdownHost* mHost;
-};
-
-class WriteTimeClient : public GMPRecordClient {
-public:
-  void Init(GMPRecord* aRecord, GMPTask* aContinuation) {
-    mRecord = aRecord;
-    mContinuation = aContinuation;
-    auto err = mRecord->Open();
-    assert(GMP_SUCCEEDED(err));
-  }
-
-  virtual void OnOpenComplete(GMPErr aStatus) override {
-    GMPTimestamp t;
-    auto err = GMPGetCurrentTime(&t);
-    std::string msg;
-    if (GMP_SUCCEEDED(err)) {
-      msg = "Shutdowm time: " + std::to_string(t);
-    } else {
-      msg = "Unable to retrieve shutdown time";
-    }
-    mRecord->Write((const uint8_t*)msg.c_str(), msg.size());
-  }
-
-  virtual void OnReadComplete(GMPErr aStatus,
-                              const uint8_t* aData,
-                              uint32_t aDataSize) override {}
-
-  virtual void OnWriteComplete(GMPErr aStatus) override {
-    GMPRunOnMainThread(mContinuation);
-  }
-
-private:
-  GMPRecord* mRecord;
-  GMPTask* mContinuation;
-};
-
-
-class AsyncShutdown : public GMPAsyncShutdown {
-public:
-  AsyncShutdown(GMPAsyncShutdownHost* aHost)
-    : mHost(aHost)
-  {}
-
-  void BeginShutdown() {
-    const char* name = "shutdown-time";
-    GMPRecord* record;
-    WriteTimeClient* client = new WriteTimeClient();
-    auto err = GMPOpenRecord(name, strlen(name), &record, client);
-    if (GMP_SUCCEEDED(err)) {
-      client->Init(record, new FinishShutdownTask(mHost));
-    }
-  }
-
-private:
-  GMPAsyncShutdownHost* mHost;
-};
 
 extern "C" {
 

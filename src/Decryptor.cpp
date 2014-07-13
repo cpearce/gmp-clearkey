@@ -33,58 +33,59 @@ Decryptor::Init(GMPDecryptorCallback* aCallback)
   mCallback = aCallback;
 }
 
-void
-Decryptor::SessionIdClient::Init(GMPRecord* aRecord, GMPTask* aContinuation)
-{
-  mId = 0;
-  mRecord = aRecord;
-  mContinuation = aContinuation;
-  auto err = mRecord->Open();
-  assert(GMP_SUCCEEDED(err));
-}
+static const std::string SessionIdRecordName = "sessionid";
 
-void
-Decryptor::SessionIdClient::OnOpenComplete(GMPErr aStatus)
-{
-  assert(GMP_SUCCEEDED(aStatus));
-  if (GMP_SUCCEEDED(aStatus)) {
-    mRecord->Read();
+class ReadShutdownTimeTask : public ReadContinuation {
+public:
+  ReadShutdownTimeTask(Decryptor* aDecryptor,
+                       const std::string& aSessionId)
+    : mDecryptor(aDecryptor)
+    , mSessionId(aSessionId)
+  {
   }
-}
-
-void
-Decryptor::SessionIdClient::OnReadComplete(GMPErr aStatus,
-                                           const uint8_t* aData,
-                                           uint32_t aDataSize)
-{
-  if (aDataSize == 4) {
-    mId = *((uint32_t*)(aData));
+  void OnReadComplete(GMPErr aErr, const std::string& aData) override {
+    if (!aData.size()) {
+      mDecryptor->SendSessionMessage(mSessionId, "First run");
+    } else {
+      GMPTimestamp s = _atoi64(aData.c_str());
+      GMPTimestamp t = 0;
+      GMPGetCurrentTime(&t);
+      t -= s;
+      std::string msg = "ClearKey CDM last shutdown " + std::to_string(t/ 1000) + "s ago.";
+      mDecryptor->SendSessionMessage(mSessionId, msg);
+    }
   }
-  uint32_t nextId = mId + 1;
-  mRecord->Write((uint8_t*)&nextId, 4);
-  GMPRunOnMainThread(mContinuation);
-  mContinuation = nullptr;
-}
+  Decryptor* mDecryptor;
+  std::string mSessionId;
+};
 
 void
-Decryptor::SessionIdClient::OnWriteComplete(GMPErr aStatus)
+Decryptor::SendSessionMessage(const std::string& aSessionId,
+                              const std::string& aMessage)
 {
-  mRecord->Close();
+  mCallback->OnSessionMessage(aSessionId.c_str(),
+                              aSessionId.size(),
+                              (const uint8_t*)aMessage.c_str(),
+                              aMessage.size(),
+                              nullptr,
+                              0);
 }
 
 void
 Decryptor::SessionIdReady(uint32_t aPromiseId,
                           uint32_t aSessionId,
-                          const uint8_t* aInitData,
-                          uint32_t aInitDataSize)
+                          const std::vector<uint8_t>& aInitData)
 {
   std::string sid = std::to_string(aSessionId);
   mCallback->OnResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
   mCallback->OnSessionMessage(sid.c_str(), sid.size(),
-                              aInitData, aInitDataSize,
+                              aInitData.data(), aInitData.size(),
                               "", 0);
 
-  std::string msg = "Message for you sir! (Sent from my GMPTask)";
+  uint32_t nextId = aSessionId + 1;
+  WriteRecord(SessionIdRecordName, std::to_string(nextId), nullptr);
+
+  std::string msg = "Message for you sir! (Sent by a timer)";
   GMPTimestamp t = 0;
   auto err = GMPGetCurrentTime(&t);
   if (GMP_SUCCEEDED(err)) {
@@ -93,7 +94,41 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
   GMPTask* task = new MessageTask(mCallback, sid, msg);
 
   GMPSetTimer(task, 3000);
+
+  ReadRecord(SHUTDOWN_TIME_RECORD, new ReadShutdownTimeTask(this, sid));
+
 }
+
+class ReadSessionId : public ReadContinuation {
+public:
+  ReadSessionId(Decryptor* aDecryptor,
+                uint32_t aPromiseId,
+                const std::string& aInitDataType,
+                vector<uint8_t>& aInitData,
+                GMPSessionType aSessionType)
+    : mDecryptor(aDecryptor)
+    , mPromiseId(aPromiseId)
+    , mInitDataType(aInitDataType)
+    , mInitData(std::move(aInitData))
+  {
+  }
+
+  void OnReadComplete(GMPErr aErr, const std::string& aData) override {
+    uint32_t sid = atoi(aData.c_str());
+    mDecryptor->SessionIdReady(mPromiseId,
+                               sid,
+                               mInitData);
+    delete this;
+  }
+
+  std::string mSessionId;
+
+private:
+  Decryptor* mDecryptor;
+  uint32_t mPromiseId;
+  std::string mInitDataType;
+  vector<uint8_t> mInitData;
+};
 
 void
 Decryptor::CreateSession(uint32_t aPromiseId,
@@ -103,22 +138,23 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
-#ifdef INCREASING_SESSION_ID
-  static uint32_t sessionNum = 1;
-  SessionIdReady(aPromiseId, sessionNum++);
-#else
-  const char* sid = "sessionid";
-  GMPRecord* record = nullptr;
-  auto err = GMPOpenRecord(sid, strlen(sid), &record, &mSessionIdClient);
-  if (GMP_SUCCEEDED(err)) {
-    auto ready = new SessionIdReadyTask(this,
-                                        aPromiseId,
-                                        &mSessionIdClient,
-                                        aInitData,
-                                        aInitDataSize);
-    mSessionIdClient.Init(record, ready);
+  const std::string initDataType(aInitDataType, aInitDataTypeSize);
+  vector<uint8_t> initData;
+  initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
+  auto err = ReadRecord(SessionIdRecordName,
+                        new ReadSessionId(this,
+                                          aPromiseId, 
+                                          initDataType,
+                                          initData,
+                                          aSessionType));
+  if (GMP_FAILED(err)) {
+    std::string msg = "ClearKeyGMP: Failed to read from storage.";
+    mCallback->OnSessionError(nullptr, 0,
+                              kGMPInvalidStateError,
+                              42,
+                              msg.c_str(),
+                              msg.size());
   }
-#endif
 }
 
 void

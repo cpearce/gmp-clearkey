@@ -46,6 +46,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <ctime>
 
 #include <strsafe.h>
 
@@ -78,4 +79,5 @@
 #include "Decryptor.h"
 #include "chromium/avc.h"
 #include "VideoDecoder.h"
-
+#include "AsyncShutdown.h"
+#include "Storage.h"

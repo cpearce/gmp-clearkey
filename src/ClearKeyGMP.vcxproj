@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(UserProfile)\src\mozilla\orange\content\media\gmp\gmp-api;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(UserProfile)\src\mozilla\purple\content\media\gmp\gmp-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -85,6 +85,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AsyncShutdown.h" />
     <ClInclude Include="AudioDecoder.h" />
     <ClInclude Include="chromium\avc.h" />
     <ClInclude Include="chromium\json_web_key.h" />
@@ -112,6 +113,7 @@
     <ClInclude Include="openssl\safestack.h" />
     <ClInclude Include="openssl\stack.h" />
     <ClInclude Include="openssl\symhacks.h" />
+    <ClInclude Include="Storage.h" />
     <ClInclude Include="VideoDecoder.h" />
     <ClInclude Include="gmp-task-utils.h" />
     <ClInclude Include="stdafx.h" />
@@ -122,6 +124,7 @@
     <ClInclude Include="WMFH264Decoder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AsyncShutdown.cpp" />
     <ClCompile Include="AudioDecoder.cpp" />
     <ClCompile Include="chromium\avc.cc" />
     <ClCompile Include="chromium\json_web_key.cpp">
@@ -150,6 +153,7 @@
     <ClCompile Include="openssl\ctr128.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Storage.cpp" />
     <ClCompile Include="VideoDecoder.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

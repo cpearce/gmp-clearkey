@@ -135,6 +135,12 @@
     <ClInclude Include="chromium\json_web_key.h">
       <Filter>chromium</Filter>
     </ClInclude>
+    <ClInclude Include="AsyncShutdown.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -190,6 +196,12 @@
     </ClCompile>
     <ClCompile Include="chromium\json_web_key.cpp">
       <Filter>chromium</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncShutdown.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
