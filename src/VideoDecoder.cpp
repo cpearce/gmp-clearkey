@@ -46,9 +46,11 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
   auto err = GMPCreateMutex(mMutex.Receive());
   ENSURE(GMP_SUCCEEDED(err), GMPGenericErr);
 
-  mExtraData.insert(mExtraData.end(),
-                    aCodecSpecific,
-                    aCodecSpecific + aCodecSpecificLength);
+  // The first byte is mPacketizationMode, which is only relevant for
+  // WebRTC/OpenH264 usecase.
+  const uint8_t* avcc = aCodecSpecific + 1;
+  const uint8_t* avccEnd = aCodecSpecific + aCodecSpecificLength;
+  mExtraData.insert(mExtraData.end(), avcc, avccEnd);
 
   if (!mAVCC.Parse(mExtraData) ||
       !AVC::ConvertConfigToAnnexB(mAVCC, &mAnnexB)) {
