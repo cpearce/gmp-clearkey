@@ -143,7 +143,7 @@ Decryptor::CreateSession(uint32_t aPromiseId,
   initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
   auto err = ReadRecord(SessionIdRecordName,
                         new ReadSessionId(this,
-                                          aPromiseId, 
+                                          aPromiseId,
                                           initDataType,
                                           initData,
                                           aSessionType));
