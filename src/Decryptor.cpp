@@ -171,6 +171,10 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
                          const uint8_t* aResponse,
                          uint32_t aResponseSize)
 {
+  // Notify Gecko of all the keys that are ready to decode with. Gecko
+  // will only try to decrypt data for keyIds which the GMP/CDM has said
+  // are usable. So don't forget to do this, otherwise the CDM won't be
+  // asked to decode/decrypt anything!
   eme_key_set keys;
   ExtractKeysFromJWKSet(std::string((const char*)aResponse, aResponseSize), keys);
   for (auto itr = keys.begin(); itr != keys.end(); itr++) {
