@@ -23,21 +23,21 @@ public:
 
   virtual ~VideoDecoder();
 
-  virtual GMPErr InitDecode(const GMPVideoCodec& aCodecSettings,
-                            const uint8_t* aCodecSpecific,
-                            uint32_t aCodecSpecificLength,
-                            GMPVideoDecoderCallback* aCallback,
-                            int32_t aCoreCount) override;
+  virtual void InitDecode(const GMPVideoCodec& aCodecSettings,
+                          const uint8_t* aCodecSpecific,
+                          uint32_t aCodecSpecificLength,
+                          GMPVideoDecoderCallback* aCallback,
+                          int32_t aCoreCount) override;
 
-  virtual GMPErr Decode(GMPVideoEncodedFrame* aInputFrame,
-                        bool aMissingFrames,
-                        const uint8_t* aCodecSpecific,
-                        uint32_t aCodecSpecificLength,
-                        int64_t aRenderTimeMs = -1);
+  virtual void Decode(GMPVideoEncodedFrame* aInputFrame,
+                      bool aMissingFrames,
+                      const uint8_t* aCodecSpecific,
+                      uint32_t aCodecSpecificLength,
+                      int64_t aRenderTimeMs = -1);
 
-  virtual GMPErr Reset() override;
+  virtual void Reset() override;
 
-  virtual GMPErr Drain() override;
+  virtual void Drain() override;
 
   virtual void DecodingComplete() override;
 
