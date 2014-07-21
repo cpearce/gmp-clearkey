@@ -181,8 +181,14 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
     eme_key_id id = itr->first;
     eme_key key = itr->second;
     mKeySet[id] = key;
-    mCallback->OnKeyIdUsable(aSessionId, aSessionIdLength, (uint8_t*)id.c_str(), id.length());
+    mCallback->OnKeyIdUsable(aSessionId,
+                             aSessionIdLength,
+                             (uint8_t*)id.c_str(),
+                             id.length());
   }
+
+  mCallback->OnSetCapabilities(GMP_EME_CAP_DECRYPT_AUDIO |
+                               GMP_EME_CAP_DECRYPT_VIDEO);
 
   std::string msg = "ClearKeyGMP says UpdateSession is throwing fake error/exception";
   mCallback->OnSessionError(aSessionId, aSessionIdLength,
@@ -219,6 +225,22 @@ Decryptor::SetServerCertificate(uint32_t aPromiseId,
 {
 }
 
+void
+Decryptor::Decrypt(GMPBuffer* aBuffer,
+                   GMPEncryptedBufferData* aMetadata)
+{
+  vector<uint8_t> decrypted;
+  if (!Decrypt(aBuffer->Data(),
+               aBuffer->Size(),
+               aMetadata,
+               decrypted)) {
+    mCallback->OnDecrypted(aBuffer, GMPCryptoErr);
+  } else {
+    memcpy(aBuffer->Data(), decrypted.data(), aBuffer->Size());
+    mCallback->OnDecrypted(aBuffer, GMPNoErr);
+  }
+}
+
 bool
 Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
                    const uint32_t aLength,
@@ -243,7 +265,7 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
   vector<uint8_t> data;
   uint32_t index = 0;
   const uint32_t num_subsamples = aCryptoData->NumSubsamples();
-  const uint32_t* clear_bytes = aCryptoData->ClearBytes();
+  const uint16_t* clear_bytes = aCryptoData->ClearBytes();
   const uint32_t* cipher_bytes = aCryptoData->CipherBytes();
   for (uint32_t i=0; i<num_subsamples; i++) {
     index += clear_bytes[i];

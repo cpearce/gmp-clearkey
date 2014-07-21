@@ -60,7 +60,7 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
 
   if (!mAVCC.Parse(mExtraData) ||
       !AVC::ConvertConfigToAnnexB(mAVCC, &mAnnexB)) {
-    mCallback->Error(GMPConfigErr);
+    mCallback->Error(GMPGenericErr);
     return;
   }
 }

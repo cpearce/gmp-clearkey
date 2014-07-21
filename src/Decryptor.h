@@ -70,6 +70,11 @@ public:
                                     const uint8_t* aServerCert,
                                     uint32_t aServerCertSize) override;
 
+  virtual void Decrypt(GMPBuffer* aBuffer,
+                       GMPEncryptedBufferData* aMetadata) override;
+
+  void Shutdown();
+
   void SessionIdReady(uint32_t aPromiseId,
                     uint32_t aSessionId,
                     const std::vector<uint8_t>& aInitData);
