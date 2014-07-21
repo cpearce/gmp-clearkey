@@ -17,7 +17,7 @@
 
 class ReadContinuation {
 public:
-  virtual void OnReadComplete(GMPErr aErr, const std::string& aData) = 0;
+  virtual void ReadComplete(GMPErr aErr, const std::string& aData) = 0;
 };
 
 // Reads a record to storage using GMPRecord.

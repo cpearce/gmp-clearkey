@@ -93,7 +93,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
     return;
   }
 
-  const GMPEncryptedBufferData* crypto = aInput->GetDecryptionData();
+  const GMPEncryptedBufferMetadata* crypto = aInput->GetDecryptionData();
   std::vector<uint8_t> buffer;
   if (crypto) {
     const uint8_t* iv = crypto->IV();

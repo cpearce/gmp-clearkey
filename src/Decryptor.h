@@ -26,7 +26,7 @@ public:
 
   bool Decrypt(const uint8_t* aBuffer,
                const uint32_t aLength,
-               const GMPEncryptedBufferData* aCryptoData,
+               const GMPEncryptedBufferMetadata* aCryptoData,
                std::vector<uint8_t>& aOutDecrypted);
 
   // GMPDecryptor
@@ -71,7 +71,7 @@ public:
                                     uint32_t aServerCertSize) override;
 
   virtual void Decrypt(GMPBuffer* aBuffer,
-                       GMPEncryptedBufferData* aMetadata) override;
+                       GMPEncryptedBufferMetadata* aMetadata) override;
 
   void Shutdown();
 
@@ -98,9 +98,9 @@ private:
       delete this;
     }
     virtual void Run() override {
-      mCallback->OnSessionMessage(mSessionId.c_str(), mSessionId.size(),
-                                  (const uint8_t*)mMessage.c_str(), mMessage.size(),
-                                  "", 0);
+      mCallback->SessionMessage(mSessionId.c_str(), mSessionId.size(),
+                                (const uint8_t*)mMessage.c_str(), mMessage.size(),
+                                "", 0);
     }
     GMPDecryptorCallback* mCallback;
     std::string mSessionId;
