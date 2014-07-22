@@ -73,7 +73,7 @@ public:
   virtual void Decrypt(GMPBuffer* aBuffer,
                        GMPEncryptedBufferMetadata* aMetadata) override;
 
-  void Shutdown();
+  virtual void DecryptingComplete() override;
 
   void SessionIdReady(uint32_t aPromiseId,
                     uint32_t aSessionId,

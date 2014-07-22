@@ -322,3 +322,8 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
 
   return true;
 }
+
+void
+Decryptor::DecryptingComplete()
+{
+}
