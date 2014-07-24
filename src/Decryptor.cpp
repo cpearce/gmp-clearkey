@@ -138,6 +138,7 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
+#ifndef DECRYPT_DATA_ONLY
   const std::string initDataType(aInitDataType, aInitDataTypeSize);
   vector<uint8_t> initData;
   initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
@@ -150,11 +151,19 @@ Decryptor::CreateSession(uint32_t aPromiseId,
   if (GMP_FAILED(err)) {
     std::string msg = "ClearKeyGMP: Failed to read from storage.";
     mCallback->SessionError(nullptr, 0,
-                              kGMPInvalidStateError,
-                              42,
-                              msg.c_str(),
-                              msg.size());
+                            kGMPInvalidStateError,
+                            42,
+                            msg.c_str(),
+                            msg.size());
   }
+#else // DECRYPT_DATA_ONLY
+  static uint32_t gSessionCount = 1;
+  std::string sid = std::to_string(gSessionCount++);
+  mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  mCallback->SessionMessage(sid.c_str(), sid.size(),
+                            aInitData, aInitDataSize,
+                            "", 0);
+#endif
 }
 
 void
@@ -192,10 +201,10 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
 
   std::string msg = "ClearKeyGMP says UpdateSession is throwing fake error/exception";
   mCallback->SessionError(aSessionId, aSessionIdLength,
-                            kGMPInvalidStateError,
-                            42,
-                            msg.c_str(),
-                            msg.size());
+                          kGMPInvalidStateError,
+                          42,
+                          msg.c_str(),
+                          msg.size());
 }
 
 void
@@ -326,4 +335,5 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
 void
 Decryptor::DecryptingComplete()
 {
+  mCallback = nullptr;
 }

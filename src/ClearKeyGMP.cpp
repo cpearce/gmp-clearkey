@@ -89,11 +89,13 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
   assert(aPlatformAPI->createmutex);
   sPlatformAPI = aPlatformAPI;
 
+#ifndef DECRYPT_DATA_ONLY
   // TODO: This is unlikely to succeed once the sandbox is enabled....
   SUCCEEDED(CoInitializeEx(0, COINIT_MULTITHREADED));
   const int MF_WIN7_VERSION = (0x0002 << 16 | MF_API_VERSION);
   MFStartup(MF_WIN7_VERSION, MFSTARTUP_FULL);
   h264DecoderModule = LoadLibraryA("msmpeg2vdec.dll");
+#endif
 
   return GMPNoErr;
 }
@@ -109,6 +111,7 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
     return GMPNoErr;
   }
 
+#ifndef DECRYPT_DATA_ONLY
   if (!strcmp(aApiName, "decode-video")) {
    *aPluginApi = new VideoDecoder(reinterpret_cast<GMPVideoHost*>(aHostAPI));
    return GMPNoErr;
@@ -123,6 +126,7 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
     *aPluginApi = new AsyncShutdown(reinterpret_cast<GMPAsyncShutdownHost*>(aHostAPI));
     return GMPNoErr;
   }
+#endif
 
   return GMPGenericErr;
 }
@@ -130,11 +134,12 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 GMP_EXPORT void
 GMPShutdown(void)
 {
+#ifndef DECRYPT_DATA_ONLY
   FreeLibrary(h264DecoderModule);
   MFShutdown();
   CoUninitialize();
+#endif
 
-  delete sPlatformAPI;
   sPlatformAPI = nullptr;
 }
 

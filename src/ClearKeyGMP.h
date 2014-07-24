@@ -24,3 +24,7 @@ GMPErr GMPOpenRecord(const char* aName,
                      GMPRecordClient* aClient);
 GMPErr GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS);
 GMPErr GMPGetCurrentTime(GMPTimestamp* aOutTime);
+
+// Turn on to disable usage of GMPStorage, GMPTimer, GMPAsyncShutdown,
+// and A/V decoding.
+#define DECRYPT_DATA_ONLY 1
