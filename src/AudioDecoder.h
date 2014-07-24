@@ -23,14 +23,14 @@ public:
 
   virtual ~AudioDecoder();
 
-  virtual GMPErr InitDecode(const GMPAudioCodec& aCodecSettings,
-                            GMPAudioDecoderCallback* aCallback) override;
+  virtual void InitDecode(const GMPAudioCodec& aCodecSettings,
+                          GMPAudioDecoderCallback* aCallback) override;
 
-  virtual GMPErr Decode(GMPAudioSamples* aEncodedSamples);
+  virtual void Decode(GMPAudioSamples* aEncodedSamples);
 
-  virtual GMPErr Reset() override;
+  virtual void Reset() override;
 
-  virtual GMPErr Drain() override;
+  virtual void Drain() override;
 
   virtual void DecodingComplete() override;
 

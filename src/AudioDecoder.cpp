@@ -29,7 +29,7 @@ AudioDecoder::~AudioDecoder()
 {
 }
 
-GMPErr
+void
 AudioDecoder::InitDecode(const GMPAudioCodec& aConfig,
                          GMPAudioDecoderCallback* aCallback)
 {
@@ -41,21 +41,25 @@ AudioDecoder::InitDecode(const GMPAudioCodec& aConfig,
                               (BYTE*)aConfig.mExtraData,
                               aConfig.mExtraDataLen);
   LOG(L"[%p] WMFDecodingModule::InitializeAudioDecoder() hr=0x%x\n", this, hr);
-  ENSURE(SUCCEEDED(hr), GMPGenericErr);
-
+  if (FAILED(hr)) {
+    mCallback->Error(GMPGenericErr);
+    return;
+  }
   auto err = GMPCreateMutex(mMutex.Receive());
-  ENSURE(GMP_SUCCEEDED(err), GMPGenericErr);
-
-  return GMPNoErr;
+  if (GMP_FAILED(err)) {
+    mCallback->Error(GMPGenericErr);
+    return;
+  }
 }
 
-GMPErr
+void
 AudioDecoder::Decode(GMPAudioSamples* aInput)
 {
   if (!mWorkerThread) {
     GMPCreateThread(mWorkerThread.Receive());
     if (!mWorkerThread) {
-      return GMPAllocErr;
+      mCallback->Error(GMPAllocErr);
+      return;
     }
   }
   {
@@ -65,7 +69,6 @@ AudioDecoder::Decode(GMPAudioSamples* aInput)
   mWorkerThread->Post(WrapTask(this,
                                &AudioDecoder::DecodeTask,
                                aInput));
-  return GMPNoErr;
 }
 
 void
@@ -90,7 +93,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
     return;
   }
 
-  const GMPEncryptedBufferData* crypto = aInput->GetDecryptionData();
+  const GMPEncryptedBufferMetadata* crypto = aInput->GetDecryptionData();
   std::vector<uint8_t> buffer;
   if (crypto) {
     const uint8_t* iv = crypto->IV();
@@ -100,7 +103,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
     assert(Decryptor::Get());
     if (!Decryptor::Get()->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
       LOG(L"Audio decryption error!");
-      // TODO: Report error...
+      mCallback->Error(GMPNoKeyErr);
       return;
     }
     inBuffer = buffer.data();
@@ -201,16 +204,14 @@ AudioDecoder::MFToGMPSample(IMFSample* aInput,
   return S_OK;
 }
 
-GMPErr
+void
 AudioDecoder::Reset()
 {
-  return GMPNoErr;
 }
 
-GMPErr
+void
 AudioDecoder::Drain()
 {
-  return GMPNoErr;
 }
 
 void

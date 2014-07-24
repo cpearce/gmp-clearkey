@@ -28,15 +28,15 @@ public:
     return mRecord->Open();
   }
 
-  virtual void OnOpenComplete(GMPErr aStatus) override {
+  virtual void OpenComplete(GMPErr aStatus) override {
     mRecord->Write(mData.data(), mData.size());
   }
 
-  virtual void OnReadComplete(GMPErr aStatus,
-                              const uint8_t* aData,
-                              uint32_t aDataSize) override {}
+  virtual void ReadComplete(GMPErr aStatus,
+                            const uint8_t* aData,
+                            uint32_t aDataSize) override {}
 
-  virtual void OnWriteComplete(GMPErr aStatus) override {
+  virtual void WriteComplete(GMPErr aStatus) override {
     // Note: Call Close() before running continuation, in case the
     // continuation tries to open the same record; if we call Close()
     // after running the continuation, the Close() call will arrive
@@ -94,17 +94,17 @@ public:
     return mRecord->Open();
   }
 
-  virtual void OnOpenComplete(GMPErr aStatus) override {
+  virtual void OpenComplete(GMPErr aStatus) override {
     auto err = mRecord->Read();
     if (GMP_FAILED(err)) {
-      mContinuation->OnReadComplete(err, "");
+      mContinuation->ReadComplete(err, "");
       delete this;
     }
   }
 
-  virtual void OnReadComplete(GMPErr aStatus,
-                              const uint8_t* aData,
-                              uint32_t aDataSize) override {
+  virtual void ReadComplete(GMPErr aStatus,
+                            const uint8_t* aData,
+                            uint32_t aDataSize) override {
     // Note: Call Close() before running continuation, in case the
     // continuation tries to open the same record; if we call Close()
     // after running the continuation, the Close() call will arrive
@@ -112,11 +112,11 @@ public:
     // record we just opened.
     mRecord->Close();
     std::string data((const char*)aData, aDataSize);
-    mContinuation->OnReadComplete(GMPNoErr, data);
+    mContinuation->ReadComplete(GMPNoErr, data);
     delete this;
   }
 
-  virtual void OnWriteComplete(GMPErr aStatus) override {
+  virtual void WriteComplete(GMPErr aStatus) override {
   }
 
 private:

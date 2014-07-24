@@ -30,7 +30,7 @@ VideoDecoder::~VideoDecoder()
 {
 }
 
-GMPErr
+void
 VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
                          const uint8_t* aCodecSpecific,
                          uint32_t aCodecSpecificLength,
@@ -41,10 +41,16 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
   assert(mCallback);
   mDecoder = new WMFH264Decoder();
   HRESULT hr = mDecoder->Init();
-  ENSURE(SUCCEEDED(hr), GMPGenericErr);
+  if (FAILED(hr)) {
+    mCallback->Error(GMPGenericErr);
+    return;
+  }
 
   auto err = GMPCreateMutex(mMutex.Receive());
-  ENSURE(GMP_SUCCEEDED(err), GMPGenericErr);
+  if (GMP_FAILED(err)) {
+    mCallback->Error(GMPGenericErr);
+    return;
+  }
 
   // The first byte is mPacketizationMode, which is only relevant for
   // WebRTC/OpenH264 usecase.
@@ -54,13 +60,12 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
 
   if (!mAVCC.Parse(mExtraData) ||
       !AVC::ConvertConfigToAnnexB(mAVCC, &mAnnexB)) {
-    return GMPGenericErr;
+    mCallback->Error(GMPGenericErr);
+    return;
   }
-
-  return GMPNoErr;
 }
 
-GMPErr
+void
 VideoDecoder::Decode(GMPVideoEncodedFrame* aInputFrame,
                      bool aMissingFrames,
                      const uint8_t* aCodecSpecificInfo,
@@ -69,13 +74,15 @@ VideoDecoder::Decode(GMPVideoEncodedFrame* aInputFrame,
 {
   if (aInputFrame->BufferType() != GMP_BufferLength32) {
     // Gecko should only send frames with 4 byte NAL sizes to GMPs.
-    return GMPGenericErr;
+    mCallback->Error(GMPGenericErr);
+    return;
   }
 
   if (!mWorkerThread) {
     GMPCreateThread(mWorkerThread.Receive());
     if (!mWorkerThread) {
-      return GMPAllocErr;
+      mCallback->Error(GMPAllocErr);
+      return;
     }
   }
   {
@@ -89,7 +96,6 @@ VideoDecoder::Decode(GMPVideoEncodedFrame* aInputFrame,
   mWorkerThread->Post(WrapTask(this,
                                &VideoDecoder::DecodeTask,
                                aInputFrame));
-  return GMPNoErr;
 }
 
 static const uint8_t kAnnexBDelimiter[] = { 0, 0, 0, 1 };
@@ -116,7 +122,7 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput)
     return;
   }
 
-  const GMPEncryptedBufferData* crypto = aInput->GetDecryptionData();
+  const GMPEncryptedBufferMetadata* crypto = aInput->GetDecryptionData();
   std::vector<uint8_t> buffer;
   if (crypto) {
     // Plugin host should have set up its decryptor/key sessions
@@ -124,7 +130,7 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput)
     assert(Decryptor::Get());
     if (!Decryptor::Get()->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
       LOG(L"Video decryption error!");
-      // TODO: Report no key...
+      mCallback->Error(GMPNoKeyErr);
       return;
     }
     buffer.data();
@@ -289,16 +295,14 @@ VideoDecoder::SampleToVideoFrame(IMFSample* aSample,
   return S_OK;
 }
 
-GMPErr
+void
 VideoDecoder::Reset()
 {
-  return GMPNoErr;
 }
 
-GMPErr
+void
 VideoDecoder::Drain()
 {
-  return GMPNoErr;
 }
 
 void

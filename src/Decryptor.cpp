@@ -43,7 +43,7 @@ public:
     , mSessionId(aSessionId)
   {
   }
-  void OnReadComplete(GMPErr aErr, const std::string& aData) override {
+  void ReadComplete(GMPErr aErr, const std::string& aData) override {
     if (!aData.size()) {
       mDecryptor->SendSessionMessage(mSessionId, "First run");
     } else {
@@ -63,12 +63,12 @@ void
 Decryptor::SendSessionMessage(const std::string& aSessionId,
                               const std::string& aMessage)
 {
-  mCallback->OnSessionMessage(aSessionId.c_str(),
-                              aSessionId.size(),
-                              (const uint8_t*)aMessage.c_str(),
-                              aMessage.size(),
-                              nullptr,
-                              0);
+  mCallback->SessionMessage(aSessionId.c_str(),
+                            aSessionId.size(),
+                            (const uint8_t*)aMessage.c_str(),
+                            aMessage.size(),
+                            nullptr,
+                            0);
 }
 
 void
@@ -77,10 +77,10 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
                           const std::vector<uint8_t>& aInitData)
 {
   std::string sid = std::to_string(aSessionId);
-  mCallback->OnResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
-  mCallback->OnSessionMessage(sid.c_str(), sid.size(),
-                              aInitData.data(), aInitData.size(),
-                              "", 0);
+  mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  mCallback->SessionMessage(sid.c_str(), sid.size(),
+                            aInitData.data(), aInitData.size(),
+                            "", 0);
 
   uint32_t nextId = aSessionId + 1;
   WriteRecord(SessionIdRecordName, std::to_string(nextId), nullptr);
@@ -113,7 +113,7 @@ public:
   {
   }
 
-  void OnReadComplete(GMPErr aErr, const std::string& aData) override {
+  void ReadComplete(GMPErr aErr, const std::string& aData) override {
     uint32_t sid = atoi(aData.c_str());
     mDecryptor->SessionIdReady(mPromiseId,
                                sid,
@@ -138,6 +138,7 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
+#ifndef DECRYPT_DATA_ONLY
   const std::string initDataType(aInitDataType, aInitDataTypeSize);
   vector<uint8_t> initData;
   initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
@@ -149,12 +150,20 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                                           aSessionType));
   if (GMP_FAILED(err)) {
     std::string msg = "ClearKeyGMP: Failed to read from storage.";
-    mCallback->OnSessionError(nullptr, 0,
-                              kGMPInvalidStateError,
-                              42,
-                              msg.c_str(),
-                              msg.size());
+    mCallback->SessionError(nullptr, 0,
+                            kGMPInvalidStateError,
+                            42,
+                            msg.c_str(),
+                            msg.size());
   }
+#else // DECRYPT_DATA_ONLY
+  static uint32_t gSessionCount = 1;
+  std::string sid = std::to_string(gSessionCount++);
+  mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  mCallback->SessionMessage(sid.c_str(), sid.size(),
+                            aInitData, aInitDataSize,
+                            "", 0);
+#endif
 }
 
 void
@@ -181,15 +190,21 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
     eme_key_id id = itr->first;
     eme_key key = itr->second;
     mKeySet[id] = key;
-    mCallback->OnKeyIdUsable(aSessionId, aSessionIdLength, (uint8_t*)id.c_str(), id.length());
+    mCallback->KeyIdUsable(aSessionId,
+                             aSessionIdLength,
+                             (uint8_t*)id.c_str(),
+                             id.length());
   }
 
+  mCallback->SetCapabilities(GMP_EME_CAP_DECRYPT_AUDIO |
+                             GMP_EME_CAP_DECRYPT_VIDEO);
+
   std::string msg = "ClearKeyGMP says UpdateSession is throwing fake error/exception";
-  mCallback->OnSessionError(aSessionId, aSessionIdLength,
-                            kGMPInvalidStateError,
-                            42,
-                            msg.c_str(),
-                            msg.size());
+  mCallback->SessionError(aSessionId, aSessionIdLength,
+                          kGMPInvalidStateError,
+                          42,
+                          msg.c_str(),
+                          msg.size());
 }
 
 void
@@ -219,10 +234,26 @@ Decryptor::SetServerCertificate(uint32_t aPromiseId,
 {
 }
 
+void
+Decryptor::Decrypt(GMPBuffer* aBuffer,
+                   GMPEncryptedBufferMetadata* aMetadata)
+{
+  vector<uint8_t> decrypted;
+  if (!Decrypt(aBuffer->Data(),
+               aBuffer->Size(),
+               aMetadata,
+               decrypted)) {
+    mCallback->Decrypted(aBuffer, GMPCryptoErr);
+  } else {
+    memcpy(aBuffer->Data(), decrypted.data(), aBuffer->Size());
+    mCallback->Decrypted(aBuffer, GMPNoErr);
+  }
+}
+
 bool
 Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
                    const uint32_t aLength,
-                   const GMPEncryptedBufferData* aCryptoData,
+                   const GMPEncryptedBufferMetadata* aCryptoData,
                    vector<uint8_t>& aOutDecrypted)
 {
   std::string kid((const char*)aCryptoData->KeyId(), aCryptoData->KeyIdSize());
@@ -243,7 +274,7 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
   vector<uint8_t> data;
   uint32_t index = 0;
   const uint32_t num_subsamples = aCryptoData->NumSubsamples();
-  const uint32_t* clear_bytes = aCryptoData->ClearBytes();
+  const uint16_t* clear_bytes = aCryptoData->ClearBytes();
   const uint32_t* cipher_bytes = aCryptoData->CipherBytes();
   for (uint32_t i=0; i<num_subsamples; i++) {
     index += clear_bytes[i];
@@ -299,4 +330,10 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
   mDecryptNumber++;
 
   return true;
+}
+
+void
+Decryptor::DecryptingComplete()
+{
+  mCallback = nullptr;
 }
