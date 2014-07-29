@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#ifdef TEST_GMP_STORAGE
 
 class ReadContinuation {
 public:
@@ -38,3 +39,5 @@ WriteRecord(const std::string& aRecordName,
             const uint8_t* aData,
             uint32_t aNumBytes,
             GMPTask* aContinuation);
+
+#endif

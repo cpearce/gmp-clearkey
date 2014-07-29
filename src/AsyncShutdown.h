@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#ifdef TEST_GMP_ASYNC_SHUTDOWN
+
 #define SHUTDOWN_TIME_RECORD "shutdown-time"
 
 class AsyncShutdown : public GMPAsyncShutdown {
@@ -23,3 +25,5 @@ public:
 private:
   GMPAsyncShutdownHost* mHost;
 };
+
+#endif

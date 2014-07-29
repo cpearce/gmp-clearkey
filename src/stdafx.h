@@ -71,6 +71,16 @@
 
 #include "chromium/json_web_key.h"
 
+// Toggles on exercising various APIs.
+//#define TEST_GMP_TIMER 1
+//#define TEST_GMP_STORAGE 1
+//#define TEST_GMP_ASYNC_SHUTDOWN 1
+//#define TEST_DECODING 1
+
+#if defined(TEST_GMP_ASYNC_SHUTDOWN) && !defined(TEST_GMP_STORAGE)
+#error TEST_GMP_ASYNC_SHUTDOWN requires TEST_GMP_STORAGE
+#endif
+
 #include "Utils.h"
 #include "WMFH264Decoder.h"
 #include "WMFAACDecoder.h"

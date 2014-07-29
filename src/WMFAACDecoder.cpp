@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
+
 using std::vector;
 using std::unique_ptr;
 
@@ -344,3 +346,5 @@ WMFAACDecoder::Reset()
 
   return S_OK;
 }
+
+#endif

@@ -33,6 +33,7 @@ Decryptor::Init(GMPDecryptorCallback* aCallback)
   mCallback = aCallback;
 }
 
+#ifdef TEST_GMP_STORAGE
 static const std::string SessionIdRecordName = "sessionid";
 
 class ReadShutdownTimeTask : public ReadContinuation {
@@ -58,6 +59,7 @@ public:
   Decryptor* mDecryptor;
   std::string mSessionId;
 };
+#endif
 
 void
 Decryptor::SendSessionMessage(const std::string& aSessionId,
@@ -71,11 +73,13 @@ Decryptor::SendSessionMessage(const std::string& aSessionId,
                             0);
 }
 
+#ifdef TEST_GMP_STORAGE
 void
 Decryptor::SessionIdReady(uint32_t aPromiseId,
                           uint32_t aSessionId,
                           const std::vector<uint8_t>& aInitData)
 {
+
   std::string sid = std::to_string(aSessionId);
   mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
   mCallback->SessionMessage(sid.c_str(), sid.size(),
@@ -85,6 +89,7 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
   uint32_t nextId = aSessionId + 1;
   WriteRecord(SessionIdRecordName, std::to_string(nextId), nullptr);
 
+#ifdef TEST_GMP_TIMER
   std::string msg = "Message for you sir! (Sent by a timer)";
   GMPTimestamp t = 0;
   auto err = GMPGetCurrentTime(&t);
@@ -94,9 +99,10 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
   GMPTask* task = new MessageTask(mCallback, sid, msg);
 
   GMPSetTimer(task, 3000);
-
+#endif
+#if defined(TEST_GMP_ASYNC_SHUTDOWN)
   ReadRecord(SHUTDOWN_TIME_RECORD, new ReadShutdownTimeTask(this, sid));
-
+#endif
 }
 
 class ReadSessionId : public ReadContinuation {
@@ -129,6 +135,7 @@ private:
   std::string mInitDataType;
   vector<uint8_t> mInitData;
 };
+#endif // TEST_GMP_STORAGE
 
 void
 Decryptor::CreateSession(uint32_t aPromiseId,
@@ -138,7 +145,7 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
-#ifndef DECRYPT_DATA_ONLY
+#ifdef TEST_GMP_STORAGE
   const std::string initDataType(aInitDataType, aInitDataTypeSize);
   vector<uint8_t> initData;
   initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
@@ -156,7 +163,7 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                             msg.c_str(),
                             msg.size());
   }
-#else // DECRYPT_DATA_ONLY
+#else
   static uint32_t gSessionCount = 1;
   std::string sid = std::to_string(gSessionCount++);
   mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());

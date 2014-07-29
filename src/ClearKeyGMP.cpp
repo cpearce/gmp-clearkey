@@ -16,11 +16,13 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
 #pragma comment(lib, "mfuuid.lib")
 #pragma comment(lib, "comdlg32.lib")
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "wmcodecdspuuid")
 #pragma comment(lib, "mfplat.lib")
+#endif
 
 static GMPPlatformAPI* sPlatformAPI = nullptr;
 
@@ -52,6 +54,7 @@ GMPCreateMutex(GMPMutex** aMutex)
   return sPlatformAPI->createmutex(aMutex);
 }
 
+#ifdef TEST_GMP_STORAGE
 GMPErr
 GMPOpenRecord(const char* aName,
               uint32_t aNameLength,
@@ -60,12 +63,15 @@ GMPOpenRecord(const char* aName,
 {
   return sPlatformAPI->createrecord(aName, aNameLength, aOutRecord, aClient);
 }
+#endif
 
+#ifdef TEST_GMP_TIMER
 GMPErr
 GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS)
 {
   return sPlatformAPI->settimer(aTask, aTimeoutMS);
 }
+#endif
 
 GMPErr
 GMPGetCurrentTime(GMPTimestamp* aOutTime)
@@ -89,7 +95,7 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
   assert(aPlatformAPI->createmutex);
   sPlatformAPI = aPlatformAPI;
 
-#ifndef DECRYPT_DATA_ONLY
+#ifdef TEST_DECODING
   // TODO: This is unlikely to succeed once the sandbox is enabled....
   SUCCEEDED(CoInitializeEx(0, COINIT_MULTITHREADED));
   const int MF_WIN7_VERSION = (0x0002 << 16 | MF_API_VERSION);
@@ -111,7 +117,7 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
     return GMPNoErr;
   }
 
-#ifndef DECRYPT_DATA_ONLY
+#ifdef TEST_DECODING
   if (!strcmp(aApiName, "decode-video")) {
    *aPluginApi = new VideoDecoder(reinterpret_cast<GMPVideoHost*>(aHostAPI));
    return GMPNoErr;
@@ -121,7 +127,9 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
    *aPluginApi = new AudioDecoder(reinterpret_cast<GMPAudioHost*>(aHostAPI));
    return GMPNoErr;
   }
+#endif
 
+#ifdef TEST_GMP_ASYNC_SHUTDOWN
   if (!strcmp(aApiName, "async-shutdown")) {
     *aPluginApi = new AsyncShutdown(reinterpret_cast<GMPAsyncShutdownHost*>(aHostAPI));
     return GMPNoErr;
@@ -134,7 +142,7 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 GMP_EXPORT void
 GMPShutdown(void)
 {
-#ifndef DECRYPT_DATA_ONLY
+#ifdef TEST_DECODING
   FreeLibrary(h264DecoderModule);
   MFShutdown();
   CoUninitialize();

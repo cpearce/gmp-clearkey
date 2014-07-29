@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
+
 class AudioDecoder : public GMPAudioDecoder
 {
 public:
@@ -51,3 +53,5 @@ private:
 
   int32_t mNumInputTasks;
 };
+
+#endif // TEST_DECODING

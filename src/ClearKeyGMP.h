@@ -18,13 +18,16 @@ GMPErr GMPCreateThread(GMPThread** aThread);
 GMPErr GMPRunOnMainThread(GMPTask* aTask);
 GMPErr GMPSyncRunOnMainThread(GMPTask* aTask);
 GMPErr GMPCreateMutex(GMPMutex** aMutex);
+
+#ifdef TEST_GMP_STORAGE
 GMPErr GMPOpenRecord(const char* aName,
                      uint32_t aNameLength,
                      GMPRecord** aOutRecord,
                      GMPRecordClient* aClient);
-GMPErr GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS);
-GMPErr GMPGetCurrentTime(GMPTimestamp* aOutTime);
+#endif
 
-// Turn on to disable usage of GMPStorage, GMPTimer, GMPAsyncShutdown,
-// and A/V decoding.
-#define DECRYPT_DATA_ONLY 1
+#ifdef TEST_GMP_TIMER
+GMPErr GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS);
+#endif
+
+GMPErr GMPGetCurrentTime(GMPTimestamp* aOutTime);

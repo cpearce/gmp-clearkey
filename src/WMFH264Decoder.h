@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#ifdef TEST_DECODING
+
 #if !defined(WMFH264Decoder_h_)
 #define WMFH264Decoder_h_
 
@@ -67,5 +69,7 @@ private:
   int32_t mStride;
 
 };
+
+#endif
 
 #endif

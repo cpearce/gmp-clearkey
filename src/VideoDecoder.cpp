@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
+
 VideoDecoder::VideoDecoder(GMPVideoHost *aHostAPI)
   : mHostAPI(aHostAPI)
   , mCallback(nullptr)
@@ -313,3 +315,5 @@ VideoDecoder::DecodingComplete()
   }
   delete this;
 }
+
+#endif

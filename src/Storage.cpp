@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_GMP_STORAGE
+
 class WriteRecordClient : public GMPRecordClient {
 public:
   GMPErr Init(GMPRecord* aRecord,
@@ -140,3 +142,5 @@ ReadRecord(const std::string& aRecordName,
   }
   return client->Init(record, aContinuation);
 }
+
+#endif

@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
+
 AudioDecoder::AudioDecoder(GMPAudioHost *aHostAPI)
   : mHostAPI(aHostAPI)
   , mCallback(nullptr)
@@ -222,3 +224,5 @@ AudioDecoder::DecodingComplete()
   }
   delete this;
 }
+
+#endif

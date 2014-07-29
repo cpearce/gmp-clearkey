@@ -30,6 +30,7 @@ void LOG(wchar_t* format, ...)
 }
 
 
+#ifdef TEST_DECODING
 
 int32_t
 MFOffsetToInt32(const MFOffset& aOffset)
@@ -119,6 +120,7 @@ GetDefaultStride(IMFMediaType *aType, uint32_t* aOutStride)
   return hr;
 }
 
+#endif
 
 void dump(const uint8_t* data, uint32_t len, const char* filename)
 {

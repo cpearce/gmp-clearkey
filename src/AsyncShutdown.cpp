@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_GMP_ASYNC_SHUTDOWN
+
 class FinishShutdownTask : public GMPTask {
 public:
   FinishShutdownTask(GMPAsyncShutdownHost* aHost)
@@ -49,3 +51,5 @@ void AsyncShutdown::BeginShutdown() {
                     msg,
                     new FinishShutdownTask(mHost));
 }
+
+#endif

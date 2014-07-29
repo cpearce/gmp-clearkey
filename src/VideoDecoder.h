@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
+
 class VideoDecoder : public GMPVideoDecoder
 {
 public:
@@ -63,3 +65,5 @@ private:
   int32_t mNumInputTasks;
   bool mSentExtraData;
 };
+
+#endif

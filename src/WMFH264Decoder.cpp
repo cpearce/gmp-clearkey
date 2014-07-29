@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#ifdef TEST_DECODING
+
 WMFH264Decoder::WMFH264Decoder()
   : mDecoder(nullptr)
 {
@@ -357,3 +359,4 @@ WMFH264Decoder::Reset()
   return S_OK;
 }
 
+#endif
