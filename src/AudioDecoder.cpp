@@ -209,11 +209,35 @@ AudioDecoder::MFToGMPSample(IMFSample* aInput,
 void
 AudioDecoder::Reset()
 {
+  mDecoder->Reset();
+  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::ResetComplete));
+}
+
+void
+AudioDecoder::DrainTask()
+{
+  if (FAILED(mDecoder->Drain())) {
+    GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::DrainComplete));
+  }
+
+  // Return any pending output.
+  HRESULT hr = S_OK;
+  while (hr == S_OK) {
+    CComPtr<IMFSample> output;
+    hr = mDecoder->Output(&output);
+    SAMPLE_LOG(L"AudioDecoder::DrainTask() output ret=0x%x\n", hr);
+    if (hr == S_OK) {
+      ReturnOutput(output);
+    }
+  }
+  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::DrainComplete));
 }
 
 void
 AudioDecoder::Drain()
 {
+  mWorkerThread->Post(WrapTask(this,
+                               &AudioDecoder::DrainTask));
 }
 
 void

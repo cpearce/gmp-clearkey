@@ -359,4 +359,13 @@ WMFH264Decoder::Reset()
   return S_OK;
 }
 
+HRESULT
+WMFH264Decoder::Drain()
+{
+  HRESULT hr = SendMFTMessage(MFT_MESSAGE_COMMAND_DRAIN, 0);
+  ENSURE(SUCCEEDED(hr), hr);
+
+  return S_OK;
+}
+
 #endif

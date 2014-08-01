@@ -39,6 +39,7 @@ public:
 private:
 
   void DecodeTask(GMPAudioSamples* aEncodedSamples);
+  void DrainTask();
 
   void ReturnOutput(IMFSample* aSample);
 

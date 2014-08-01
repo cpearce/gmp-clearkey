@@ -41,6 +41,8 @@ public:
   const IntRect& GetPictureRegion() const;
   int32_t GetStride() const;
 
+  HRESULT Drain();
+
 private:
 
   HRESULT SetDecoderInputType();

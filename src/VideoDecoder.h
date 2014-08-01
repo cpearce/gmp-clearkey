@@ -45,6 +45,8 @@ public:
 
 private:
 
+  void DrainTask();
+
   void DecodeTask(GMPVideoEncodedFrame* aInputFrame);
 
   void ReturnOutput(IMFSample* aSample);

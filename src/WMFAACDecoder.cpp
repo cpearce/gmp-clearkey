@@ -347,4 +347,13 @@ WMFAACDecoder::Reset()
   return S_OK;
 }
 
+HRESULT
+WMFAACDecoder::Drain()
+{
+  HRESULT hr = SendMFTMessage(MFT_MESSAGE_COMMAND_DRAIN, 0);
+  ENSURE(SUCCEEDED(hr), hr);
+
+  return S_OK;
+}
+
 #endif

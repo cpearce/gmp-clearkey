@@ -37,6 +37,8 @@ public:
 
   HRESULT Reset();
 
+  HRESULT Drain();
+
 private:
 
   HRESULT GetOutputSample(IMFSample** aOutSample);

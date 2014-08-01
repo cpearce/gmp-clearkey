@@ -300,11 +300,35 @@ VideoDecoder::SampleToVideoFrame(IMFSample* aSample,
 void
 VideoDecoder::Reset()
 {
+  mDecoder->Reset();
+  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::ResetComplete));
+}
+
+void
+VideoDecoder::DrainTask()
+{
+  if (FAILED(mDecoder->Drain())) {
+    GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::DrainComplete));
+  }
+
+  // Return any pending output.
+  HRESULT hr = S_OK;
+  while (hr == S_OK) {
+    CComPtr<IMFSample> output;
+    hr = mDecoder->Output(&output);
+    SAMPLE_LOG(L"VideoDecoder::DrainTask() output ret=0x%x\n", hr);
+    if (hr == S_OK) {
+      ReturnOutput(output);
+    }
+  }
+  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::DrainComplete));
 }
 
 void
 VideoDecoder::Drain()
 {
+  mWorkerThread->Post(WrapTask(this,
+                               &VideoDecoder::DrainTask));
 }
 
 void
