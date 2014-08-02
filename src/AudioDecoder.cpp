@@ -210,7 +210,7 @@ void
 AudioDecoder::Reset()
 {
   mDecoder->Reset();
-  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::ResetComplete));
+  mCallback->ResetComplete();
 }
 
 void

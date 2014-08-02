@@ -301,7 +301,7 @@ void
 VideoDecoder::Reset()
 {
   mDecoder->Reset();
-  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::ResetComplete));
+  mCallback->ResetComplete();
 }
 
 void
