@@ -203,8 +203,13 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
                              id.length());
   }
 
+#ifdef TEST_DECODING
+  mCallback->SetCapabilities(GMP_EME_CAP_DECRYPT_AND_DECODE_AUDIO |
+                             GMP_EME_CAP_DECRYPT_AND_DECODE_VIDEO);
+#else
   mCallback->SetCapabilities(GMP_EME_CAP_DECRYPT_AUDIO |
                              GMP_EME_CAP_DECRYPT_VIDEO);
+#endif
 
   std::string msg = "ClearKeyGMP says UpdateSession is throwing fake error/exception";
   mCallback->SessionError(aSessionId, aSessionIdLength,
