@@ -89,17 +89,6 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
   uint32_t nextId = aSessionId + 1;
   WriteRecord(SessionIdRecordName, std::to_string(nextId), nullptr);
 
-#ifdef TEST_GMP_TIMER
-  std::string msg = "Message for you sir! (Sent by a timer)";
-  GMPTimestamp t = 0;
-  auto err = GMPGetCurrentTime(&t);
-  if (GMP_SUCCEEDED(err)) {
-    msg += " time=" + std::to_string(t);
-  }
-  GMPTask* task = new MessageTask(mCallback, sid, msg);
-
-  GMPSetTimer(task, 3000);
-#endif
 #if defined(TEST_GMP_ASYNC_SHUTDOWN)
   ReadRecord(SHUTDOWN_TIME_RECORD, new ReadShutdownTimeTask(this, sid));
 #endif
@@ -171,6 +160,19 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                             aInitData, aInitDataSize,
                             "", 0);
 #endif
+
+#ifdef TEST_GMP_TIMER
+  std::string msg = "Message for you sir! (Sent by a timer)";
+  GMPTimestamp t = 0;
+  auto err = GMPGetCurrentTime(&t);
+  if (GMP_SUCCEEDED(err)) {
+    msg += " time=" + std::to_string(t);
+  }
+  GMPTask* task = new MessageTask(mCallback, sid, msg);
+
+  GMPSetTimer(task, 3000);
+#endif
+
 }
 
 void
