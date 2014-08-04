@@ -48,7 +48,7 @@ VideoDecoder::InitDecode(const GMPVideoCodec& aCodecSettings,
     return;
   }
 
-  auto err = GMPCreateMutex(mMutex.Receive());
+  auto err = GMPCreateMutex(&mMutex);
   if (GMP_FAILED(err)) {
     mCallback->Error(GMPGenericErr);
     return;
@@ -81,7 +81,7 @@ VideoDecoder::Decode(GMPVideoEncodedFrame* aInputFrame,
   }
 
   if (!mWorkerThread) {
-    GMPCreateThread(mWorkerThread.Receive());
+    GMPCreateThread(&mWorkerThread);
     if (!mWorkerThread) {
       mCallback->Error(GMPAllocErr);
       return;

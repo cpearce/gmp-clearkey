@@ -48,8 +48,8 @@ private:
 
   GMPAudioHost *mHostAPI; // host-owned, invalid at DecodingComplete
   GMPAudioDecoderCallback* mCallback; // host-owned, invalid at DecodingComplete
-  AutoPtr<GMPThread> mWorkerThread;
-  AutoPtr<GMPMutex> mMutex;
+  GMPThread* mWorkerThread;
+  GMPMutex* mMutex;
   AutoPtr<WMFAACDecoder> mDecoder;
 
   int32_t mNumInputTasks;

@@ -56,8 +56,8 @@ private:
 
   GMPVideoHost *mHostAPI; // host-owned, invalid at DecodingComplete
   GMPVideoDecoderCallback* mCallback; // host-owned, invalid at DecodingComplete
-  AutoPtr<GMPThread> mWorkerThread;
-  AutoPtr<GMPMutex> mMutex;
+  GMPThread* mWorkerThread;
+  GMPMutex* mMutex;
   AutoPtr<WMFH264Decoder> mDecoder;
 
   std::vector<uint8_t> mExtraData;

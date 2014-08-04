@@ -47,7 +47,7 @@ AudioDecoder::InitDecode(const GMPAudioCodec& aConfig,
     mCallback->Error(GMPGenericErr);
     return;
   }
-  auto err = GMPCreateMutex(mMutex.Receive());
+  auto err = GMPCreateMutex(&mMutex);
   if (GMP_FAILED(err)) {
     mCallback->Error(GMPGenericErr);
     return;
@@ -58,7 +58,7 @@ void
 AudioDecoder::Decode(GMPAudioSamples* aInput)
 {
   if (!mWorkerThread) {
-    GMPCreateThread(mWorkerThread.Receive());
+    GMPCreateThread(&mWorkerThread);
     if (!mWorkerThread) {
       mCallback->Error(GMPAllocErr);
       return;
