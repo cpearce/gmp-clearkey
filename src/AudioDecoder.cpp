@@ -29,6 +29,7 @@ AudioDecoder::AudioDecoder(GMPAudioHost *aHostAPI)
 
 AudioDecoder::~AudioDecoder()
 {
+  mMutex->Destroy();
 }
 
 void

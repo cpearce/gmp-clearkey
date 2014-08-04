@@ -30,6 +30,7 @@ VideoDecoder::VideoDecoder(GMPVideoHost *aHostAPI)
 
 VideoDecoder::~VideoDecoder()
 {
+  mMutex->Destroy();
 }
 
 void
