@@ -126,6 +126,47 @@ private:
 };
 #endif // TEST_GMP_STORAGE
 
+#ifdef TEST_GMP_TIMER
+
+class AssertFalseTask : public GMPTask {
+public:
+  void Run() override {
+    assert(false);
+  }
+  void Destroy() override {
+    delete this;
+  }
+};
+
+class SetOffMainThreadTimerTask : public GMPTask {
+public:
+  SetOffMainThreadTimerTask(GMPThread* aThread)
+    : mThread(aThread)
+  {
+  }
+
+  void Run() override {
+    // Assert that setting a null timer fails.
+    assert(GMP_FAILED(GMPSetTimer(nullptr, 1000)));
+
+    auto t = new AssertFalseTask();
+    auto err = GMPSetTimer(t, 1000);
+    assert(GMP_FAILED(err));
+    if (GMP_FAILED(err)) {
+      delete t;
+    }
+    // Shutdown the thread.
+    GMPRunOnMainThread(WrapTask(mThread, &GMPThread::Join));
+  }
+  void Destroy() override {
+    delete this;
+  }
+private:
+  GMPThread* mThread;
+};
+
+#endif
+
 void
 Decryptor::CreateSession(uint32_t aPromiseId,
                          const char* aInitDataType,
@@ -171,6 +212,14 @@ Decryptor::CreateSession(uint32_t aPromiseId,
   GMPTask* task = new MessageTask(mCallback, sid, msg);
 
   GMPSetTimer(task, 3000);
+
+  // Assert that setting a timer on a non-main thread fails.
+  GMPThread* thread = nullptr;
+  err = GMPCreateThread(&thread);
+  assert(GMP_SUCCEEDED(err));
+  if (GMP_SUCCEEDED(err)) {
+    thread->Post(new SetOffMainThreadTimerTask(thread));
+  }
 #endif
 
 }
