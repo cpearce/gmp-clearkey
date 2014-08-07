@@ -118,7 +118,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
                        aInput->TimeStamp());
 
   // We must delete the input sample!
-  GMPSyncRunOnMainThread(WrapTask(aInput, &GMPAudioSamples::Destroy));
+  GMPRunOnMainThread(WrapTask(aInput, &GMPAudioSamples::Destroy));
 
   SAMPLE_LOG(L"AudioDecoder::DecodeTask() Input ret hr=0x%x\n", hr);
   if (FAILED(hr)) {
@@ -140,7 +140,7 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
       if (mNumInputTasks == 0) {
         // We have run all input tasks. We *must* notify Gecko so that it will
         // send us more data.
-        GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::InputDataExhausted));
+        GMPRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::InputDataExhausted));
       }
     } else if (FAILED(hr)) {
       LOG(L"AudioDecoder::DecodeTask() output failed hr=0x%x\n", hr);
@@ -171,7 +171,7 @@ AudioDecoder::ReturnOutput(IMFSample* aSample)
   }
   ENSURE(SUCCEEDED(hr), /*void*/);
 
-  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::Decoded, samples));
+  GMPRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::Decoded, samples));
 }
 
 HRESULT

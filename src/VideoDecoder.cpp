@@ -155,7 +155,7 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput)
                        aInput->Duration());
 
   // We must delete the input sample!
-  GMPSyncRunOnMainThread(WrapTask(aInput, &GMPVideoEncodedFrame::Destroy));
+  GMPRunOnMainThread(WrapTask(aInput, &GMPVideoEncodedFrame::Destroy));
 
   SAMPLE_LOG(L"VideoDecoder::DecodeTask() Input ret hr=0x%x\n", hr);
   if (FAILED(hr)) {
@@ -177,7 +177,7 @@ VideoDecoder::DecodeTask(GMPVideoEncodedFrame* aInput)
       if (mNumInputTasks == 0) {
         // We have run all input tasks. We *must* notify Gecko so that it will
         // send us more data.
-        GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::InputDataExhausted));
+        GMPRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::InputDataExhausted));
       }
     }
     if (FAILED(hr)) {
@@ -205,7 +205,7 @@ VideoDecoder::ReturnOutput(IMFSample* aSample)
   hr = SampleToVideoFrame(aSample, vf);
   ENSURE(SUCCEEDED(hr), /*void*/);
 
-  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::Decoded, vf));
+  GMPRunOnMainThread(WrapTask(mCallback, &GMPVideoDecoderCallback::Decoded, vf));
 
 }
 
