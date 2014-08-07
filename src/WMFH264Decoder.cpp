@@ -298,7 +298,7 @@ WMFH264Decoder::GetOutputSample(IMFSample** aOutSample)
     ENSURE(SUCCEEDED(hr), hr);
 
     return GetOutputSample(aOutSample);
-  } else if (hr == MF_E_TRANSFORM_NEED_MORE_INPUT || !sample) {
+  } else if (hr == MF_E_TRANSFORM_NEED_MORE_INPUT) {
     return MF_E_TRANSFORM_NEED_MORE_INPUT;
   }
   // Treat other errors as fatal.
