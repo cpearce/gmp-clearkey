@@ -23,6 +23,8 @@ using std::unique_ptr;
 
 WMFAACDecoder::WMFAACDecoder()
   : mDecoder(nullptr)
+  , mChannels(0)
+  , mRate(0)
 {
   memset(&mInputStreamInfo, 0, sizeof(MFT_INPUT_STREAM_INFO));
   memset(&mOutputStreamInfo, 0, sizeof(MFT_OUTPUT_STREAM_INFO));
@@ -145,10 +147,12 @@ WMFAACDecoder::SetDecoderInputType(int32_t aChannelCount,
   hr = type->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_AAC);
   ENSURE(SUCCEEDED(hr), hr);
 
-  hr = type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, aSampleRate);
+  mRate = aSampleRate;
+  hr = type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, mRate);
   ENSURE(SUCCEEDED(hr), hr);
 
-  hr = type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, aChannelCount);
+  mChannels = aChannelCount;
+  hr = type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, mChannels);
   ENSURE(SUCCEEDED(hr), hr);
 
   hr = type->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x1); // ADTS
@@ -179,6 +183,12 @@ WMFAACDecoder::SetDecoderOutputType()
     }
     if (subtype == MFAudioFormat_PCM) {
       hr = mDecoder->SetOutputType(0, type, 0);
+      ENSURE(SUCCEEDED(hr), hr);
+
+      hr = type->GetUINT32(MF_MT_AUDIO_NUM_CHANNELS, &mChannels);
+      ENSURE(SUCCEEDED(hr), hr);
+
+      hr = type->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &mRate);
       ENSURE(SUCCEEDED(hr), hr);
 
       return S_OK;

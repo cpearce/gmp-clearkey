@@ -203,6 +203,8 @@ AudioDecoder::MFToGMPSample(IMFSample* aInput,
   hr = aInput->GetSampleTime(&hns);
   ENSURE(SUCCEEDED(hr), hr);
   aOutput->SetTimeStamp(HNsToUsecs(hns));
+  aOutput->SetChannels(mDecoder->Channels());
+  aOutput->SetRate(mDecoder->Rate());
 
   return S_OK;
 }

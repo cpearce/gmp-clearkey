@@ -39,6 +39,9 @@ public:
 
   HRESULT Drain();
 
+  UINT32 Channels() const { return mChannels; }
+  UINT32 Rate() const { return mRate; }
+
 private:
 
   HRESULT GetOutputSample(IMFSample** aOutSample);
@@ -59,6 +62,9 @@ private:
   MFT_OUTPUT_STREAM_INFO mOutputStreamInfo;
 
   CComPtr<IMFTransform> mDecoder;
+
+  UINT32 mChannels;
+  UINT32 mRate;
 };
 
 #endif
