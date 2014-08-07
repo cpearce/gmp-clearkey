@@ -39,7 +39,7 @@ ReadVec(const uint8_t*& p,
         int count)
 {
   ENSURE(p + count <= end, false);
-  vec.resize(count);
+  vec.reserve(count);
   uint32_t bytesRead = 0;
   vec.insert(vec.end(), p, p+count);
   p += count;
