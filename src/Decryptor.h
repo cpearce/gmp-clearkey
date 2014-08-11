@@ -83,6 +83,11 @@ public:
 
   void SendSessionMessage(const std::string& aSessionId,
                           const std::string& aMessage);
+
+#ifdef TEST_GMP_TIMER
+void SendMessageToNotifyOfSessionId(const std::string& aSid);
+#endif
+
 private:
   GMPDecryptorCallback* mCallback;
 

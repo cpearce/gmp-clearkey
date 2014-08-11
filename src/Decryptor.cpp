@@ -89,6 +89,10 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
   uint32_t nextId = aSessionId + 1;
   WriteRecord(SessionIdRecordName, std::to_string(nextId), nullptr);
 
+#ifdef TEST_GMP_TIMER
+  SendMessageToNotifyOfSessionId(sid);
+#endif // TEST_GMP_TIMER
+
 #if defined(TEST_GMP_ASYNC_SHUTDOWN)
   ReadRecord(SHUTDOWN_TIME_RECORD, new ReadShutdownTimeTask(this, sid));
 #endif
@@ -167,6 +171,21 @@ private:
 
 #endif
 
+#ifdef TEST_GMP_TIMER
+void
+Decryptor::SendMessageToNotifyOfSessionId(const std::string& aSid)
+{
+  std::string msg = "Message for you sir! (Sent by a timer)";
+  GMPTimestamp t = 0;
+  auto err = GMPGetCurrentTime(&t);
+  if (GMP_SUCCEEDED(err)) {
+    msg += " time=" + std::to_string(t);
+  }
+  GMPTask* task = new MessageTask(mCallback, aSid, msg);
+  GMPSetTimer(task, 3000);
+}
+#endif
+
 void
 Decryptor::CreateSession(uint32_t aPromiseId,
                          const char* aInitDataType,
@@ -175,16 +194,17 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                          uint32_t aInitDataSize,
                          GMPSessionType aSessionType)
 {
+  GMPErr err;
 #ifdef TEST_GMP_STORAGE
   const std::string initDataType(aInitDataType, aInitDataTypeSize);
   vector<uint8_t> initData;
   initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
-  auto err = ReadRecord(SessionIdRecordName,
-                        new ReadSessionId(this,
-                                          aPromiseId,
-                                          initDataType,
-                                          initData,
-                                          aSessionType));
+  err = ReadRecord(SessionIdRecordName,
+                   new ReadSessionId(this,
+                                     aPromiseId,
+                                     initDataType,
+                                     initData,
+                                     aSessionType));
   if (GMP_FAILED(err)) {
     std::string msg = "ClearKeyGMP: Failed to read from storage.";
     mCallback->SessionError(nullptr, 0,
@@ -200,19 +220,14 @@ Decryptor::CreateSession(uint32_t aPromiseId,
   mCallback->SessionMessage(sid.c_str(), sid.size(),
                             aInitData, aInitDataSize,
                             "", 0);
-#endif
+#ifdef TEST_GMP_TIMER
+  SendMessageToNotifyOfSessionId(sid);
+#endif // TEST_GMP_TIMER
+
+#endif // !TEST_GMP_STORAGE
+
 
 #ifdef TEST_GMP_TIMER
-  std::string msg = "Message for you sir! (Sent by a timer)";
-  GMPTimestamp t = 0;
-  auto err = GMPGetCurrentTime(&t);
-  if (GMP_SUCCEEDED(err)) {
-    msg += " time=" + std::to_string(t);
-  }
-  GMPTask* task = new MessageTask(mCallback, sid, msg);
-
-  GMPSetTimer(task, 3000);
-
   // Assert that setting a timer on a non-main thread fails.
   GMPThread* thread = nullptr;
   err = GMPCreateThread(&thread);
