@@ -41,6 +41,7 @@ AsyncShutdown::AsyncShutdown(GMPAsyncShutdownHost* aHost)
 {}
 
 void AsyncShutdown::BeginShutdown() {
+#ifndef TEST_GMP_ASYNC_SHUTDOWN_TIMEOUT
   GMPTimestamp t;
   auto err = GMPGetCurrentTime(&t);
   std::string msg;
@@ -50,6 +51,7 @@ void AsyncShutdown::BeginShutdown() {
   err = WriteRecord(SHUTDOWN_TIME_RECORD,
                     msg,
                     new FinishShutdownTask(mHost));
+#endif
 }
 
 #endif
