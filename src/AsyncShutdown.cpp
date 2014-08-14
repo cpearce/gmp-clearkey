@@ -40,7 +40,25 @@ AsyncShutdown::AsyncShutdown(GMPAsyncShutdownHost* aHost)
   : mHost(aHost)
 {}
 
+#ifdef TEST_GMP_TIMER_IN_ASYNC_SHUTDOWN
+class AbortTask : public GMPTask {
+public:
+  void Run() override {
+    abort();
+  }
+  void Destroy() override {
+    delete this;
+  }
+};
+#endif
+
 void AsyncShutdown::BeginShutdown() {
+#ifdef TEST_GMP_CRASH_DURING_ASYNC_SHUTDOWN
+  abort();
+#endif
+#ifdef TEST_GMP_TIMER_IN_ASYNC_SHUTDOWN
+  GMPSetTimer(new AbortTask(), 1000);
+#endif
 #ifndef TEST_GMP_ASYNC_SHUTDOWN_TIMEOUT
   GMPTimestamp t;
   auto err = GMPGetCurrentTime(&t);
