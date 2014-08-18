@@ -128,6 +128,41 @@ private:
   std::string mInitDataType;
   vector<uint8_t> mInitData;
 };
+
+#define TRUNCATE_RECORD "truncate-record"
+#define TRUNCATE_DATA "I will soon be truncated"
+
+class ReadThenTask : public GMPTask {
+public:
+  ReadThenTask(ReadContinuation* aThen)
+    : mThen(aThen)
+  {}
+  void Run() override {
+    ReadRecord(TRUNCATE_RECORD, mThen);
+  }
+  void Destroy() override {
+    delete this;
+  }
+  ReadContinuation* mThen;
+};
+
+class TestEmptyContinuation : public ReadContinuation {
+public:
+  void ReadComplete(GMPErr aErr, const std::string& aData) override {
+    assert(aData == "");
+    delete this;
+  }
+};
+
+class TruncateContinuation : public ReadContinuation {
+public:
+  void ReadComplete(GMPErr aErr, const std::string& aData) override {
+    assert(aData == TRUNCATE_DATA);
+    WriteRecord(TRUNCATE_RECORD, nullptr, 0, new ReadThenTask(new TestEmptyContinuation()));
+    delete this;
+  }
+};
+
 #endif // TEST_GMP_STORAGE
 
 #ifdef TEST_GMP_TIMER
@@ -212,6 +247,12 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                             42,
                             msg.c_str(),
                             msg.size());
+  }
+  if (TEST_GMP_STORAGE_TRUNCATE) {
+    WriteRecord(TRUNCATE_RECORD,
+                TRUNCATE_DATA,
+                new ReadThenTask(new TruncateContinuation()));
+
   }
 #else
   static uint32_t gSessionCount = 1;

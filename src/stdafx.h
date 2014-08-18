@@ -74,6 +74,7 @@
 // Toggles on exercising various APIs.
 //#define TEST_GMP_TIMER 1
 //#define TEST_GMP_STORAGE 1
+//#define TEST_GMP_STORAGE_TRUNCATE 1
 //#define TEST_GMP_ASYNC_SHUTDOWN 1
 //#define TEST_GMP_ASYNC_SHUTDOWN_TIMEOUT 1
 //#define TEST_DECODING 1
@@ -94,6 +95,10 @@
 
 #if defined(TEST_GMP_CRASH_DURING_ASYNC_SHUTDOWN) && defined(TEST_GMP_ASYNC_SHUTDOWN_TIMEOUT)
 #error Can do both TEST_GMP_CRASH_DURING_ASYNC_SHUTDOWN and TEST_GMP_ASYNC_SHUTDOWN_TIMEOUT
+#endif
+
+#if defined(TEST_GMP_STORAGE_TRUNCATE) && !defined(TEST_GMP_STORAGE)
+#error TEST_GMP_STORAGE_TRUNCATE required TEST_GMP_STORAGE
 #endif
 
 #include "Utils.h"
