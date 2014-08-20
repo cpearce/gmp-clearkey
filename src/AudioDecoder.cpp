@@ -103,8 +103,9 @@ AudioDecoder::DecodeTask(GMPAudioSamples* aInput)
     uint32_t sz = crypto->IVSize();
     // Plugin host should have set up its decryptor/key sessions
     // before trying to decode!
-    assert(Decryptor::Get());
-    if (!Decryptor::Get()->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
+    auto decryptor = Decryptor::Get(crypto);
+    if (!decryptor ||
+        !decryptor->Decrypt(inBuffer, aInput->Size(), crypto, buffer)) {
       LOG(L"Audio decryption error!");
       mCallback->Error(GMPNoKeyErr);
       return;

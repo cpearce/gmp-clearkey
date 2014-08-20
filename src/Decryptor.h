@@ -21,8 +21,9 @@ extern "C" {
 class Decryptor : public GMPDecryptor {
 public:
 
-  static Decryptor* Get();
-  static void Create(GMPDecryptorHost* aHost);
+  Decryptor(GMPDecryptorHost* aHost);
+
+  static Decryptor* Get(const GMPEncryptedBufferMetadata* aCryptoData);
 
   bool Decrypt(const uint8_t* aBuffer,
                const uint32_t aLength,
@@ -89,6 +90,9 @@ void SendMessageToNotifyOfSessionId(const std::string& aSid);
 #endif
 
 private:
+
+  bool CanDecryptKey(const std::string& aKeyId);
+
   GMPDecryptorCallback* mCallback;
 
   class MessageTask : public GMPTask {
@@ -113,8 +117,6 @@ private:
     std::string mSessionId;
     std::string mMessage;
   };
-
-  Decryptor(GMPDecryptorHost* aHost);
 
   GMPDecryptorHost* mHost;
 

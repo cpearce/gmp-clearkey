@@ -1,36 +1,50 @@
 #include "stdafx.h"
 
+#include <algorithm>
+
 using std::vector;
 
 static Decryptor* instance = nullptr;
 
-/* static */
-Decryptor*
-Decryptor::Get()
-{
-  return instance;
-}
-
-/* static */
-void
-Decryptor::Create(GMPDecryptorHost* aHost)
-{
-  assert(!Get());
-  instance = new Decryptor(aHost);
-}
-
 Decryptor::Decryptor(GMPDecryptorHost* aHost)
-  : mHost(aHost)
+  : mCallback(nullptr)
+  , mHost(aHost)
   , mNum(0)
   , mDecryptNumber(0)
 {
   memset(&mEcount, 0, AES_BLOCK_SIZE);
 }
 
+static std::vector<Decryptor*> sDecryptors;
+
+/* static */
+Decryptor*
+Decryptor::Get(const GMPEncryptedBufferMetadata* aCryptoData)
+{
+  // We can have multiple GMPDecryptors active in the same plugin instance,
+  // as the plugin is shared between all media elements in the same origin.
+  // So we maintain a list of the active GMPDecryptors, and select the newest
+  // one that can decrypt the buffer. This may not be correct if there is
+  // multiple content sharing the same key in the same origin...
+  const std::string kid((const char*)aCryptoData->KeyId(), aCryptoData->KeyIdSize());
+
+  auto itr = find_if(sDecryptors.rbegin(),
+                     sDecryptors.rend(),
+                     [&](Decryptor* d)->bool { return d->CanDecryptKey(kid); });
+  return (itr != sDecryptors.rend()) ? *itr : nullptr;
+}
+
+bool
+Decryptor::CanDecryptKey(const std::string& aKeyId)
+{
+  return mCallback && mKeySet.find(aKeyId) != mKeySet.end();
+}
+
 void
 Decryptor::Init(GMPDecryptorCallback* aCallback)
 {
   mCallback = aCallback;
+  sDecryptors.push_back(this);
 }
 
 #ifdef TEST_GMP_STORAGE
@@ -455,4 +469,5 @@ void
 Decryptor::DecryptingComplete()
 {
   mCallback = nullptr;
+  sDecryptors.erase(find(sDecryptors.begin(), sDecryptors.end(), this));
 }

@@ -110,10 +110,7 @@ GMP_EXPORT GMPErr
 GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 {
   if (!strcmp(aApiName, "eme-decrypt")) {
-    if (!Decryptor::Get()) {
-      Decryptor::Create(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
-    }
-    *aPluginApi = Decryptor::Get();
+    *aPluginApi = new Decryptor(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
     return GMPNoErr;
   }
 
