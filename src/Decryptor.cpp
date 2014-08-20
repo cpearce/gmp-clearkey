@@ -9,10 +9,8 @@ static Decryptor* instance = nullptr;
 Decryptor::Decryptor(GMPDecryptorHost* aHost)
   : mCallback(nullptr)
   , mHost(aHost)
-  , mNum(0)
   , mDecryptNumber(0)
 {
-  memset(&mEcount, 0, AES_BLOCK_SIZE);
 }
 
 static std::vector<Decryptor*> sDecryptors;
@@ -395,7 +393,9 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
     return false;
   }
   const std::string key = mKeySet[kid];
-  if (AES_set_encrypt_key((uint8_t*)key.c_str(), 128, &mKey)) {
+
+  AES_KEY aesKey;
+  if (AES_set_encrypt_key((uint8_t*)key.c_str(), 128, &aesKey)) {
     LOG(L"Failed to set decryption key!\n");
     return false;
   }
@@ -417,30 +417,23 @@ Decryptor::Decrypt(const uint8_t* aEncryptedBuffer,
     index += cipher_bytes[i];
   }
 
-  // Ensure the data length is a multiple of 16, and the extra data is
-  // filled with 0's
-  int32_t extra = (data.size() + AES_BLOCK_SIZE) % AES_BLOCK_SIZE;
-  data.insert(data.end(), extra, uint8_t(0));
-
   // Decrypt the buffer.
   const uint32_t iterations = data.size() / AES_BLOCK_SIZE;
   vector<uint8_t> decrypted;
   decrypted.resize(data.size());
+
+  uint32_t num = 0;
+  uint8_t ecount[AES_BLOCK_SIZE] = {0};
   uint8_t iv[AES_BLOCK_SIZE] = {0};
   memcpy(iv, aCryptoData->IV(), aCryptoData->IVSize());
-  for (uint32_t i=0; i<iterations; i++) {
-    uint8_t* in = data.data() + i*AES_BLOCK_SIZE;
-    assert(in + AES_BLOCK_SIZE <= data.data() + data.size());
-    uint8_t* out = decrypted.data() + i*AES_BLOCK_SIZE;
-    assert(out + AES_BLOCK_SIZE <= decrypted.data() + decrypted.size());
-    AES_ctr128_encrypt(in,
-                       out,
-                       AES_BLOCK_SIZE,
-                       &mKey,
-                       iv,
-                       mEcount,
-                       &mNum);
-  }
+
+  AES_ctr128_encrypt(data.data(),
+                     decrypted.data(),
+                     data.size(),
+                     &aesKey,
+                     iv,
+                     ecount,
+                     &num);
 
   // Re-assemble the decrypted buffer.
   aOutDecrypted.clear();

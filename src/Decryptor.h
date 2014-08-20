@@ -120,9 +120,6 @@ private:
 
   GMPDecryptorHost* mHost;
 
-  AES_KEY mKey;
-  unsigned int mNum;
-  unsigned char mEcount[AES_BLOCK_SIZE];
   uint32_t mDecryptNumber;
   eme_key_set mKeySet;
 };
