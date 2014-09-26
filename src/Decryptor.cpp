@@ -108,6 +108,17 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
 #if defined(TEST_GMP_ASYNC_SHUTDOWN)
   ReadRecord(SHUTDOWN_TIME_RECORD, new ReadShutdownTimeTask(this, sid));
 #endif
+
+#ifdef TEST_NODE_ID
+  const char* _id = nullptr;
+  uint32_t len = 0;
+  mHost->GetNodeId(&_id, &len);
+  std::string id(_id, len);
+  std::string msg = "Node ID is: " + id;
+  mCallback->SessionMessage(sid.c_str(), sid.size(),
+                            (uint8_t*)msg.c_str(), msg.size(),
+                            "", 0);
+#endif
 }
 
 class ReadSessionId : public ReadContinuation {
@@ -216,9 +227,6 @@ private:
   GMPThread* mThread;
 };
 
-#endif
-
-#ifdef TEST_GMP_TIMER
 void
 Decryptor::SendMessageToNotifyOfSessionId(const std::string& aSid)
 {
@@ -260,12 +268,11 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                             msg.c_str(),
                             msg.size());
   }
-  if (TEST_GMP_STORAGE_TRUNCATE) {
-    WriteRecord(TRUNCATE_RECORD,
-                TRUNCATE_DATA,
-                new ReadThenTask(new TruncateContinuation()));
-
-  }
+#ifdef TEST_GMP_STORAGE_TRUNCATE
+  WriteRecord(TRUNCATE_RECORD,
+              TRUNCATE_DATA,
+              new ReadThenTask(new TruncateContinuation()));
+#endif
 #else
   static uint32_t gSessionCount = 1;
   std::string sid = std::to_string(gSessionCount++);
@@ -276,6 +283,18 @@ Decryptor::CreateSession(uint32_t aPromiseId,
 #ifdef TEST_GMP_TIMER
   SendMessageToNotifyOfSessionId(sid);
 #endif // TEST_GMP_TIMER
+
+#ifdef TEST_NODE_ID
+  const char* _id = nullptr;
+  uint32_t len = 0;
+  mHost->GetNodeId(&_id, &len);
+  std::string id(_id, len);
+  std::string msg = "Node ID is: " + id;
+  mCallback->SessionMessage(sid.c_str(), sid.size(),
+                            (uint8_t*)msg.c_str(), msg.size(),
+                            "", 0);
+#endif
+
 
 #endif // !TEST_GMP_STORAGE
 
@@ -289,7 +308,6 @@ Decryptor::CreateSession(uint32_t aPromiseId,
     thread->Post(new SetOffMainThreadTimerTask(thread));
   }
 #endif
-
 }
 
 void
