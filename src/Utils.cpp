@@ -129,3 +129,46 @@ void dump(const uint8_t* data, uint32_t len, const char* filename)
   fwrite(data, len, 1, f);
   fclose(f);
 }
+
+HRESULT
+CreateMFT(const CLSID& clsid,
+          const wchar_t* aDllName,
+          CComPtr<IMFTransform>& aOutMFT)
+{
+  HMODULE module = ::GetModuleHandle(aDllName);
+  if (!module) {
+    assert(module);
+    LOG(L"Failed to get %S\n", aDllName);
+    return E_FAIL;
+  }
+
+  typedef HRESULT (WINAPI* DllGetClassObjectFnPtr)(const CLSID& clsid,
+                                                   const IID& iid,
+                                                   void** object);
+
+  DllGetClassObjectFnPtr GetClassObjPtr =
+    reinterpret_cast<DllGetClassObjectFnPtr>(GetProcAddress(module, "DllGetClassObject"));
+  if (!GetClassObjPtr) {
+    LOG(L"Failed to get DllGetClassObject\n");
+    return E_FAIL;
+  }
+
+  CComPtr<IClassFactory> classFactory;
+  HRESULT hr = GetClassObjPtr(clsid,
+                              __uuidof(IClassFactory),
+                              reinterpret_cast<void**>(static_cast<IClassFactory**>(&classFactory)));
+  if (FAILED(hr)) {
+    LOG(L"Failed to get H264 IClassFactory\n");
+    return E_FAIL;
+  }
+
+  hr = classFactory->CreateInstance(NULL,
+                                    __uuidof(IMFTransform),
+                                    reinterpret_cast<void**>(static_cast<IMFTransform**>(&aOutMFT)));
+  if (FAILED(hr)) {
+    LOG(L"Failed to get create MFT\n");
+    return E_FAIL;
+  }
+
+  return S_OK;
+}

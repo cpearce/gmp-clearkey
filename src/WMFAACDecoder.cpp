@@ -89,15 +89,18 @@ WMFAACDecoder::Init(int32_t aChannelCount,
 {
   HRESULT hr;
 
-  hr = CoCreateInstance(CLSID_CMSAACDecMFT,
-                        NULL,
-                        CLSCTX_INPROC_SERVER,
-                        IID_IMFTransform,
-                        reinterpret_cast<void**>(static_cast<IMFTransform**>(&mDecoder)));
-
+  // AAC decoder is in msauddecmft on Win8, and msmpeg2adec in earlier versions.
+  hr = CreateMFT(CLSID_CMSAACDecMFT,
+                 L"msauddecmft.dll",
+                 mDecoder);
   if (FAILED(hr)) {
-    LOG(L"Failed to get create AAC decoder\n");
-    return E_FAIL;
+    hr = CreateMFT(CLSID_CMSAACDecMFT,
+                   L"msmpeg2adec.dll",
+                   mDecoder);
+    if (FAILED(hr)) {
+      LOG(L"Failed to create AAC decoder\n");
+      return E_FAIL;
+    }
   }
 
   BYTE* userData = nullptr;

@@ -171,3 +171,8 @@ private:
 };
 
 void dump(const uint8_t* data, uint32_t len, const char* filename);
+
+HRESULT
+CreateMFT(const CLSID& clsid,
+          const wchar_t* aDllName,
+          CComPtr<IMFTransform>& aOutMFT);

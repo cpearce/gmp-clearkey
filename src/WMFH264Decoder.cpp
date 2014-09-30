@@ -32,40 +32,12 @@ WMFH264Decoder::~WMFH264Decoder()
 HRESULT
 WMFH264Decoder::Init()
 {
-  HMODULE module = ::GetModuleHandle(L"msmpeg2vdec.dll");
-  if (!module) {
-    assert(module);
-    LOG(L"Failed to get msmpeg2vdec.dll\n");
-    return E_FAIL;
-  }
+  HRESULT hr;
 
-  typedef HRESULT (WINAPI* DllGetClassObjectFnPtr)(const CLSID& clsid,
-                                                   const IID& iid,
-                                                   void** object);
-
-  DllGetClassObjectFnPtr GetClassObjPtr =
-    reinterpret_cast<DllGetClassObjectFnPtr>(GetProcAddress(module, "DllGetClassObject"));
-  if (!GetClassObjPtr) {
-    LOG(L"Failed to get DllGetClassObject\n");
-    return E_FAIL;
-  }
-
-  CComPtr<IClassFactory> classFactory;
-  HRESULT hr = GetClassObjPtr(__uuidof(CMSH264DecoderMFT),
-                              __uuidof(IClassFactory),
-                              reinterpret_cast<void**>(static_cast<IClassFactory**>(&classFactory)));
-  if (FAILED(hr)) {
-    LOG(L"Failed to get H264 IClassFactory\n");
-    return E_FAIL;
-  }
-
-  hr = classFactory->CreateInstance(NULL,
-                                    __uuidof(IMFTransform),
-                                    reinterpret_cast<void**>(static_cast<IMFTransform**>(&mDecoder)));
-  if (FAILED(hr)) {
-    LOG(L"Failed to get create H264 decoder\n");
-    return E_FAIL;
-  }
+  hr = CreateMFT(__uuidof(CMSH264DecoderMFT),
+                 L"msmpeg2vdec.dll",
+                 mDecoder);
+  ENSURE(SUCCEEDED(hr), hr);
 
   hr = SetDecoderInputType();
   ENSURE(SUCCEEDED(hr), hr);
