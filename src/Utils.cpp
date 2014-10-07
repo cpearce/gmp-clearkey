@@ -137,7 +137,6 @@ CreateMFT(const CLSID& clsid,
 {
   HMODULE module = ::GetModuleHandle(aDllName);
   if (!module) {
-    assert(module);
     LOG(L"Failed to get %S\n", aDllName);
     return E_FAIL;
   }
