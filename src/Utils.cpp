@@ -114,7 +114,7 @@ GetDefaultStride(IMFMediaType *aType, uint32_t* aOutStride)
   hr = MFGetAttributeSize(aType, MF_MT_FRAME_SIZE, &width, &height);
   ENSURE(SUCCEEDED(hr), hr);
 
-  hr = MFGetStrideForBitmapInfoHeader(subtype.Data1, width, (LONG*)(aOutStride));
+  hr = wmf::MFGetStrideForBitmapInfoHeader(subtype.Data1, width, (LONG*)(aOutStride));
   ENSURE(SUCCEEDED(hr), hr);
 
   return hr;

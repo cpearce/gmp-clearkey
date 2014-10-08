@@ -77,7 +77,7 @@
 //#define TEST_GMP_STORAGE_TRUNCATE 1
 //#define TEST_GMP_ASYNC_SHUTDOWN 1
 //#define TEST_GMP_ASYNC_SHUTDOWN_TIMEOUT 1
-//#define TEST_DECODING 1
+#define TEST_DECODING 1
 //#define TEST_GMP_CRASH_DURING_ASYNC_SHUTDOWN 1
 //#define TEST_GMP_TIMER_IN_ASYNC_SHUTDOWN 1
 //#define TEST_NODE_ID 1
@@ -112,3 +112,4 @@
 #include "VideoDecoder.h"
 #include "AsyncShutdown.h"
 #include "Storage.h"
+#include "WmfWrappers.h"

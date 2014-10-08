@@ -58,6 +58,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) $(SolutionDir)\gmp-clearkey\devel\clearkey.dll</Command>
@@ -124,6 +126,7 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WMFAACDecoder.h" />
     <ClInclude Include="WMFH264Decoder.h" />
+    <ClInclude Include="WmfWrappers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsyncShutdown.cpp" />
@@ -179,6 +182,7 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WMFAACDecoder.cpp" />
     <ClCompile Include="WMFH264Decoder.cpp" />
+    <ClCompile Include="WmfWrappers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -118,7 +118,7 @@ WMFH264Decoder::SetDecoderInputType()
   HRESULT hr;
 
   CComPtr<IMFMediaType> type;
-  hr = ::MFCreateMediaType(&type);
+  hr = wmf::MFCreateMediaType(&type);
   ENSURE(SUCCEEDED(hr), hr);
 
   hr = type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
@@ -182,13 +182,13 @@ WMFH264Decoder::CreateInputSample(const uint8_t* aData,
 {
   HRESULT hr;
   CComPtr<IMFSample> sample;
-  hr = MFCreateSample(&sample);
+  hr = wmf::MFCreateSample(&sample);
   ENSURE(SUCCEEDED(hr), hr);
 
   CComPtr<IMFMediaBuffer> buffer;
   int32_t bufferSize = std::max<uint32_t>(uint32_t(mInputStreamInfo.cbSize), aDataSize);
   UINT32 alignment = (mInputStreamInfo.cbAlignment > 1) ? mInputStreamInfo.cbAlignment - 1 : 0;
-  hr = MFCreateAlignedMemoryBuffer(bufferSize, alignment, &buffer);
+  hr = wmf::MFCreateAlignedMemoryBuffer(bufferSize, alignment, &buffer);
   ENSURE(SUCCEEDED(hr), hr);
 
   DWORD maxLength = 0;
@@ -224,13 +224,13 @@ WMFH264Decoder::CreateOutputSample(IMFSample** aOutSample)
 {
   HRESULT hr;
   CComPtr<IMFSample> sample;
-  hr = MFCreateSample(&sample);
+  hr = wmf::MFCreateSample(&sample);
   ENSURE(SUCCEEDED(hr), hr);
 
   CComPtr<IMFMediaBuffer> buffer;
   int32_t bufferSize = mOutputStreamInfo.cbSize;
   UINT32 alignment = (mOutputStreamInfo.cbAlignment > 1) ? mOutputStreamInfo.cbAlignment - 1 : 0;
-  hr = MFCreateAlignedMemoryBuffer(bufferSize, alignment, &buffer);
+  hr = wmf::MFCreateAlignedMemoryBuffer(bufferSize, alignment, &buffer);
   ENSURE(SUCCEEDED(hr), hr);
 
   DWORD maxLength = 0;

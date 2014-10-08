@@ -18,10 +18,11 @@
 
 #ifdef TEST_DECODING
 #pragma comment(lib, "mfuuid.lib")
-#pragma comment(lib, "comdlg32.lib")
-#pragma comment(lib, "Winmm.lib")
+//#pragma comment(lib, "comdlg32.lib")
+//#pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "wmcodecdspuuid")
-#pragma comment(lib, "mfplat.lib")
+//#pragma comment(lib, "mfplat.lib")
+//#pragma comment(lib, "delayimp.lib")
 #endif
 
 static GMPPlatformAPI* sPlatformAPI = nullptr;
@@ -98,9 +99,8 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
 #ifdef TEST_DECODING
   // TODO: This is unlikely to succeed once the sandbox is enabled....
   SUCCEEDED(CoInitializeEx(0, COINIT_MULTITHREADED));
-  const int MF_WIN7_VERSION = (0x0002 << 16 | MF_API_VERSION);
-  MFStartup(MF_WIN7_VERSION, MFSTARTUP_FULL);
-  h264DecoderModule = LoadLibraryA("msmpeg2vdec.dll");
+  wmf::MFStartup();
+  //h264DecoderModule = LoadLibraryA("msmpeg2vdec.dll");
 #endif
 
   return GMPNoErr;
@@ -109,6 +109,11 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
 GMP_EXPORT GMPErr
 GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 {
+
+  if (!GetModuleHandleA("mfplat.dll")) {
+    return GMPNoErr;
+  }
+
   if (!strcmp(aApiName, "eme-decrypt")) {
     *aPluginApi = new Decryptor(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
     return GMPNoErr;
@@ -140,8 +145,8 @@ GMP_EXPORT void
 GMPShutdown(void)
 {
 #ifdef TEST_DECODING
-  FreeLibrary(h264DecoderModule);
-  MFShutdown();
+  //FreeLibrary(h264DecoderModule);
+  wmf::MFShutdown();
   CoUninitialize();
 #endif
 
