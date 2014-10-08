@@ -18,8 +18,6 @@
 
 #ifdef TEST_DECODING
 #pragma comment(lib, "mfuuid.lib")
-#pragma comment(lib, "comdlg32.lib")
-#pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "wmcodecdspuuid")
 #pragma comment(lib, "mfplat.lib")
 #endif
