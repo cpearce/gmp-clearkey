@@ -35,7 +35,6 @@ WMFAACDecoder::~WMFAACDecoder()
   Reset();
 }
 
-
 HRESULT
 AACAudioSpecificConfigToUserData(BYTE* aAudioSpecConfig, UINT32 aConfigLength,
                                  BYTE** aOutUserData, UINT32* aOutUserDataLength)
@@ -69,8 +68,8 @@ AACAudioSpecificConfigToUserData(BYTE* aAudioSpecConfig, UINT32 aConfigLength,
   const UINT32 heeInfoLen = 4 * sizeof(WORD) + sizeof(DWORD);
   BYTE heeInfo[heeInfoLen] = {0};
   WORD* w = (WORD*)heeInfo;
-  w[0] = 0x1; // Payload type ADTS
-  w[1] = 0xFE; // Profile level indication, none specified.
+  w[0] = 0x0; // Payload type raw AAC
+  w[1] = 0; // Profile level unspecified
 
   const UINT32 len =  heeInfoLen + aConfigLength;
   BYTE* data = new BYTE[len];
@@ -158,7 +157,7 @@ WMFAACDecoder::SetDecoderInputType(int32_t aChannelCount,
   hr = type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, mChannels);
   ENSURE(SUCCEEDED(hr), hr);
 
-  hr = type->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x1); // ADTS
+  hr = type->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x0); // Raw AAC
   ENSURE(SUCCEEDED(hr), hr);
 
   hr = type->SetBlob(MF_MT_USER_DATA, aUserData, aUserDataLength);
