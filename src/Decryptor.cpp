@@ -110,11 +110,7 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
 #endif
 
 #ifdef TEST_NODE_ID
-  const char* _id = nullptr;
-  uint32_t len = 0;
-  mHost->GetNodeId(&_id, &len);
-  std::string id(_id, len);
-  std::string msg = "Node ID is: " + id;
+  std::string msg = "Node ID is: " + GetNodeId();
   mCallback->SessionMessage(sid.c_str(), sid.size(),
                             (uint8_t*)msg.c_str(), msg.size(),
                             "", 0);
@@ -285,11 +281,7 @@ Decryptor::CreateSession(uint32_t aPromiseId,
 #endif // TEST_GMP_TIMER
 
 #ifdef TEST_NODE_ID
-  const char* _id = nullptr;
-  uint32_t len = 0;
-  mHost->GetNodeId(&_id, &len);
-  std::string id(_id, len);
-  std::string msg = "Node ID is: " + id;
+  std::string msg = "Node ID is: " + GetNodeId();
   mCallback->SessionMessage(sid.c_str(), sid.size(),
                             (uint8_t*)msg.c_str(), msg.size(),
                             "", 0);

@@ -31,3 +31,5 @@ GMPErr GMPSetTimer(GMPTask* aTask, int64_t aTimeoutMS);
 #endif
 
 GMPErr GMPGetCurrentTime(GMPTimestamp* aOutTime);
+
+const std::string& GetNodeId();

@@ -77,7 +77,13 @@ GMPGetCurrentTime(GMPTimestamp* aOutTime)
   return sPlatformAPI->getcurrenttime(aOutTime);
 }
 
+#ifdef TEST_NODE_ID
+static std::string sNodeId;
 
+const std::string& GetNodeId() {
+  return sNodeId;
+}
+#endif // TEST_NODE_ID
 
 extern "C" {
 
@@ -145,5 +151,13 @@ GMPShutdown(void)
 
   sPlatformAPI = nullptr;
 }
+
+#ifdef TEST_NODE_ID
+GMP_EXPORT void
+GMPSetNodeId(const char* aNodeId, uint32_t aLength)
+{
+  sNodeId = std::string(aNodeId, aNodeId + aLength);
+}
+#endif // TEST_NODE_ID
 
 } // extern "C"
