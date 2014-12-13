@@ -287,6 +287,16 @@ Decryptor::CreateSession(uint32_t aPromiseId,
                             "", 0);
 #endif
 
+#ifdef TEST_SANDBOX_VOUCHER
+  const uint8_t* p;
+  uint32_t l;
+  mHost->GetSandboxVoucher(&p, &l);
+  std::string msg = "Sandbox voucher length: " + std::to_string(l);
+  mCallback->SessionMessage(sid.c_str(), sid.size(),
+                            (uint8_t*)msg.c_str(), msg.size(),
+                            "", 0);
+#endif
+
 
 #endif // !TEST_GMP_STORAGE
 
