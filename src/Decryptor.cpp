@@ -87,13 +87,15 @@ Decryptor::SendSessionMessage(const std::string& aSessionId,
 
 #ifdef TEST_GMP_STORAGE
 void
-Decryptor::SessionIdReady(uint32_t aPromiseId,
+Decryptor::SessionIdReady(uint32_t aCreateSessionId,
+                          uint32_t aPromiseId,
                           uint32_t aSessionId,
                           const std::vector<uint8_t>& aInitData)
 {
 
   std::string sid = std::to_string(aSessionId);
-  mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  mCallback->SetSessionId(aCreateSessionId, sid.c_str(), sid.size());
+  mCallback->ResolvePromise(aPromiseId);
   mCallback->SessionMessage(sid.c_str(), sid.size(),
                             aInitData.data(), aInitData.size(),
                             "", 0);
@@ -120,11 +122,13 @@ Decryptor::SessionIdReady(uint32_t aPromiseId,
 class ReadSessionId : public ReadContinuation {
 public:
   ReadSessionId(Decryptor* aDecryptor,
+                uint32_t aCreateSessionId,
                 uint32_t aPromiseId,
                 const std::string& aInitDataType,
                 vector<uint8_t>& aInitData,
                 GMPSessionType aSessionType)
     : mDecryptor(aDecryptor)
+    , mCreateSessionId(aCreateSessionId)
     , mPromiseId(aPromiseId)
     , mInitDataType(aInitDataType)
     , mInitData(std::move(aInitData))
@@ -133,7 +137,8 @@ public:
 
   void ReadComplete(GMPErr aErr, const std::string& aData) override {
     uint32_t sid = atoi(aData.c_str());
-    mDecryptor->SessionIdReady(mPromiseId,
+    mDecryptor->SessionIdReady(mCreateSessionId,
+                               mPromiseId,
                                sid,
                                mInitData);
     delete this;
@@ -143,6 +148,7 @@ public:
 
 private:
   Decryptor* mDecryptor;
+  uint32_t mCreateSessionId;
   uint32_t mPromiseId;
   std::string mInitDataType;
   vector<uint8_t> mInitData;
@@ -253,6 +259,7 @@ Decryptor::CreateSession(uint32_t aCreateSessionId,
   initData.insert(initData.end(), aInitData, aInitData+aInitDataSize);
   err = ReadRecord(SessionIdRecordName,
                    new ReadSessionId(this,
+                                     aCreateSessionId,
                                      aPromiseId,
                                      initDataType,
                                      initData,
@@ -273,7 +280,8 @@ Decryptor::CreateSession(uint32_t aCreateSessionId,
 #else
   static uint32_t gSessionCount = 1;
   std::string sid = std::to_string(gSessionCount++);
-  mCallback->ResolveNewSessionPromise(aPromiseId, sid.c_str(), sid.size());
+  mCallback->SetSessionId(aCreateSessionId, sid.c_str(), sid.size());
+  mCallback->ResolvePromise(aPromiseId);
   mCallback->SessionMessage(sid.c_str(), sid.size(),
                             aInitData, aInitDataSize,
                             "", 0);
