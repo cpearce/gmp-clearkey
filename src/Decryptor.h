@@ -77,9 +77,10 @@ public:
   virtual void DecryptingComplete() override;
 
 #ifdef TEST_GMP_STORAGE
-  void SessionIdReady(uint32_t aPromiseId,
-                    uint32_t aSessionId,
-                    const std::vector<uint8_t>& aInitData);
+  void SessionIdReady(uint32_t aCreateSessionId,
+                      uint32_t aPromiseId,
+                      uint32_t aSessionId,
+                      const std::vector<uint8_t>& aInitData);
 #endif
 
   void SendSessionMessage(const std::string& aSessionId,

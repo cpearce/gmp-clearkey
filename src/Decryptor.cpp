@@ -238,7 +238,8 @@ Decryptor::SendMessageToNotifyOfSessionId(const std::string& aSid)
 #endif
 
 void
-Decryptor::CreateSession(uint32_t aPromiseId,
+Decryptor::CreateSession(uint32_t aCreateSessionId,
+                         uint32_t aPromiseId,
                          const char* aInitDataType,
                          uint32_t aInitDataTypeSize,
                          const uint8_t* aInitData,
