@@ -113,25 +113,25 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
 GMP_EXPORT GMPErr
 GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 {
-  if (!strcmp(aApiName, "eme-decrypt")) {
+  if (!strcmp(aApiName, GMP_API_DECRYPTOR)) {
     *aPluginApi = new Decryptor(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
     return GMPNoErr;
   }
 
 #ifdef TEST_DECODING
-  if (!strcmp(aApiName, "decode-video")) {
+  if (!strcmp(aApiName, GMP_API_VIDEO_DECODER)) {
    *aPluginApi = new VideoDecoder(reinterpret_cast<GMPVideoHost*>(aHostAPI));
    return GMPNoErr;
   }
 
-  if (!strcmp(aApiName, "decode-audio")) {
+  if (!strcmp(aApiName, GMP_API_AUDIO_DECODER)) {
    *aPluginApi = new AudioDecoder(reinterpret_cast<GMPAudioHost*>(aHostAPI));
    return GMPNoErr;
   }
 #endif
 
 #ifdef TEST_GMP_ASYNC_SHUTDOWN
-  if (!strcmp(aApiName, "async-shutdown")) {
+  if (!strcmp(aApiName, GMP_API_ASYNC_SHUTDOWN)) {
     *aPluginApi = new AsyncShutdown(reinterpret_cast<GMPAsyncShutdownHost*>(aHostAPI));
     return GMPNoErr;
   }
