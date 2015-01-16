@@ -38,7 +38,8 @@ public:
   // with the web session ID on success, or OnSessionError() on failure,
   // and then call OnSessionReady() once all keys for that session are
   // available.
-  virtual void CreateSession(uint32_t aPromiseId,
+  virtual void CreateSession(uint32_t aCreateSessionId,
+                             uint32_t aPromiseId,
                              const char* aInitDataType,
                              uint32_t aInitDataTypeSize,
                              const uint8_t* aInitData,

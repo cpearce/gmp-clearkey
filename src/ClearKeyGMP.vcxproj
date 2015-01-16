@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(UserProfile)\src\mozilla\purple\content\media\gmp\gmp-api;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(UserProfile)\src\mozilla\purple\dom\media\gmp\gmp-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
