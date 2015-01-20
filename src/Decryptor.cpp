@@ -79,10 +79,9 @@ Decryptor::SendSessionMessage(const std::string& aSessionId,
 {
   mCallback->SessionMessage(aSessionId.c_str(),
                             aSessionId.size(),
+                            kGMPLicenseRequest,
                             (const uint8_t*)aMessage.c_str(),
-                            aMessage.size(),
-                            nullptr,
-                            0);
+                            aMessage.size());
 }
 
 #ifdef TEST_GMP_STORAGE
@@ -97,8 +96,8 @@ Decryptor::SessionIdReady(uint32_t aCreateSessionId,
   mCallback->SetSessionId(aCreateSessionId, sid.c_str(), sid.size());
   mCallback->ResolvePromise(aPromiseId);
   mCallback->SessionMessage(sid.c_str(), sid.size(),
-                            aInitData.data(), aInitData.size(),
-                            "", 0);
+                            kGMPLicenseRequest,
+                            aInitData.data(), aInitData.size());
 
   uint32_t nextId = aSessionId + 1;
   WriteRecord(SessionIdRecordName, std::to_string(nextId), nullptr);
@@ -114,8 +113,8 @@ Decryptor::SessionIdReady(uint32_t aCreateSessionId,
 #ifdef TEST_NODE_ID
   std::string msg = "Node ID is: " + GetNodeId();
   mCallback->SessionMessage(sid.c_str(), sid.size(),
-                            (uint8_t*)msg.c_str(), msg.size(),
-                            "", 0);
+                            kGMPLicenseRequest,
+                            (uint8_t*)msg.c_str(), msg.size());
 #endif
 }
 
@@ -283,8 +282,8 @@ Decryptor::CreateSession(uint32_t aCreateSessionId,
   mCallback->SetSessionId(aCreateSessionId, sid.c_str(), sid.size());
   mCallback->ResolvePromise(aPromiseId);
   mCallback->SessionMessage(sid.c_str(), sid.size(),
-                            aInitData, aInitDataSize,
-                            "", 0);
+                            kGMPLicenseRequest,
+                            aInitData, aInitDataSize);
 #ifdef TEST_GMP_TIMER
   SendMessageToNotifyOfSessionId(sid);
 #endif // TEST_GMP_TIMER
@@ -292,8 +291,8 @@ Decryptor::CreateSession(uint32_t aCreateSessionId,
 #ifdef TEST_NODE_ID
   std::string msg = "Node ID is: " + GetNodeId();
   mCallback->SessionMessage(sid.c_str(), sid.size(),
-                            (uint8_t*)msg.c_str(), msg.size(),
-                            "", 0);
+                            kGMPLicenseRequest,
+                            (uint8_t*)msg.c_str(), msg.size());
 #endif
 
 #ifdef TEST_SANDBOX_VOUCHER
@@ -302,8 +301,8 @@ Decryptor::CreateSession(uint32_t aCreateSessionId,
   mHost->GetSandboxVoucher(&p, &l);
   std::string msg = "Sandbox voucher length: " + std::to_string(l);
   mCallback->SessionMessage(sid.c_str(), sid.size(),
-                            (uint8_t*)msg.c_str(), msg.size(),
-                            "", 0);
+                            kGMPLicenseRequest,
+                            (uint8_t*)msg.c_str(), msg.size());
 #endif
 
 

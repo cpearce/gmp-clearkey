@@ -112,8 +112,8 @@ private:
     }
     virtual void Run() override {
       mCallback->SessionMessage(mSessionId.c_str(), mSessionId.size(),
-                                (const uint8_t*)mMessage.c_str(), mMessage.size(),
-                                "", 0);
+                                kGMPLicenseRequest,
+                                (const uint8_t*)mMessage.c_str(), mMessage.size());
     }
     GMPDecryptorCallback* mCallback;
     std::string mSessionId;
