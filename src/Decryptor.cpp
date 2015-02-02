@@ -344,10 +344,11 @@ Decryptor::UpdateSession(uint32_t aPromiseId,
     eme_key_id id = itr->first;
     eme_key key = itr->second;
     mKeySet[id] = key;
-    mCallback->KeyIdUsable(aSessionId,
-                             aSessionIdLength,
-                             (uint8_t*)id.c_str(),
-                             id.length());
+    mCallback->KeyStatusChanged(aSessionId,
+                                aSessionIdLength,
+                                (uint8_t*)id.c_str(),
+                                id.length(),
+                                kGMPUsable);
   }
 
 #ifdef TEST_DECODING
