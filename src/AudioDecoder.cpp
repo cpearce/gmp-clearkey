@@ -220,9 +220,7 @@ AudioDecoder::Reset()
 void
 AudioDecoder::DrainTask()
 {
-  if (FAILED(mDecoder->Drain())) {
-    GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::DrainComplete));
-  }
+  mDecoder->Drain();
 
   // Return any pending output.
   HRESULT hr = S_OK;
@@ -234,7 +232,7 @@ AudioDecoder::DrainTask()
       ReturnOutput(output);
     }
   }
-  GMPSyncRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::DrainComplete));
+  GMPRunOnMainThread(WrapTask(mCallback, &GMPAudioDecoderCallback::DrainComplete));
 }
 
 void

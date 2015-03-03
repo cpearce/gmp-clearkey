@@ -16,7 +16,6 @@
 
 GMPErr GMPCreateThread(GMPThread** aThread);
 GMPErr GMPRunOnMainThread(GMPTask* aTask);
-GMPErr GMPSyncRunOnMainThread(GMPTask* aTask);
 GMPErr GMPCreateMutex(GMPMutex** aMutex);
 
 #ifdef TEST_GMP_STORAGE

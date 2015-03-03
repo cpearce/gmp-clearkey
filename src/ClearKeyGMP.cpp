@@ -39,13 +39,6 @@ GMPRunOnMainThread(GMPTask* aTask)
 }
 
 GMPErr
-GMPSyncRunOnMainThread(GMPTask* aTask)
-{
-  assert(sPlatformAPI);
-  return sPlatformAPI->syncrunonmainthread(aTask);
-}
-
-GMPErr
 GMPCreateMutex(GMPMutex** aMutex)
 {
   assert(sPlatformAPI);
