@@ -49,11 +49,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CLEARKEYGMP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -87,7 +88,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClearKeyGMP.cpp" />
+    <ClCompile Include="AnnexB.cpp" />
+    <ClCompile Include="AudioDecoder.cpp" />
+    <ClCompile Include="ClearKeyDecryptionManager.cpp" />
+    <ClCompile Include="ClearKeyPersistence.cpp" />
+    <ClCompile Include="ClearKeySession.cpp" />
+    <ClCompile Include="ClearKeySessionManager.cpp" />
+    <ClCompile Include="ClearKeyStorage.cpp" />
+    <ClCompile Include="ClearKeyUtils.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -96,14 +104,34 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="gmp-clearkey.cpp" />
+    <ClCompile Include="openaes\oaes_lib.c" />
+    <ClCompile Include="VideoDecoder.cpp" />
+    <ClCompile Include="WMFAACDecoder.cpp" />
+    <ClCompile Include="WMFH264Decoder.cpp" />
+    <ClCompile Include="WMFUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="AnnexB.h" />
+    <ClInclude Include="AudioDecoder.h" />
+    <ClInclude Include="ClearKeyDecryptionManager.h" />
+    <ClInclude Include="ClearKeyPersistence.h" />
+    <ClInclude Include="ClearKeySession.h" />
+    <ClInclude Include="ClearKeySessionManager.h" />
+    <ClInclude Include="ClearKeyStorage.h" />
+    <ClInclude Include="ClearKeyUtils.h" />
+    <ClInclude Include="gmp-task-utils-generated.h" />
+    <ClInclude Include="gmp-task-utils.h" />
+    <ClInclude Include="openaes\oaes_common.h" />
+    <ClInclude Include="openaes\oaes_config.h" />
+    <ClInclude Include="openaes\oaes_lib.h" />
+    <ClInclude Include="openaes\standard.h" />
+    <ClInclude Include="RefCounted.h" />
+    <ClInclude Include="VideoDecoder.h" />
+    <ClInclude Include="WMFAACDecoder.h" />
+    <ClInclude Include="WMFH264Decoder.h" />
+    <ClInclude Include="WMFSymbols.h" />
+    <ClInclude Include="WMFUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
