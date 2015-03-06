@@ -87,83 +87,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AsyncShutdown.h" />
-    <ClInclude Include="AudioDecoder.h" />
-    <ClInclude Include="chromium\avc.h" />
-    <ClInclude Include="chromium\json_web_key.h" />
-    <ClInclude Include="Decryptor.h" />
-    <ClInclude Include="json\autolink.h" />
-    <ClInclude Include="json\config.h" />
-    <ClInclude Include="json\features.h" />
-    <ClInclude Include="json\forwards.h" />
-    <ClInclude Include="json\json.h" />
-    <ClInclude Include="json\json_batchallocator.h" />
-    <ClInclude Include="json\reader.h" />
-    <ClInclude Include="json\value.h" />
-    <ClInclude Include="json\writer.h" />
-    <ClInclude Include="modp_b64\modp_b64.h" />
-    <ClInclude Include="modp_b64\modp_b64_data.h" />
-    <ClInclude Include="openssl\aes.h" />
-    <ClInclude Include="openssl\aes_locl.h" />
-    <ClInclude Include="openssl\crypto.h" />
-    <ClInclude Include="openssl\e_os2.h" />
-    <ClInclude Include="openssl\modes.h" />
-    <ClInclude Include="openssl\modes_lcl.h" />
-    <ClInclude Include="openssl\opensslconf.h" />
-    <ClInclude Include="openssl\opensslv.h" />
-    <ClInclude Include="openssl\ossl_typ.h" />
-    <ClInclude Include="openssl\safestack.h" />
-    <ClInclude Include="openssl\stack.h" />
-    <ClInclude Include="openssl\symhacks.h" />
-    <ClInclude Include="Storage.h" />
-    <ClInclude Include="VideoDecoder.h" />
-    <ClInclude Include="gmp-task-utils.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="ClearKeyGMP.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="WMFAACDecoder.h" />
-    <ClInclude Include="WMFH264Decoder.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AsyncShutdown.cpp" />
-    <ClCompile Include="AudioDecoder.cpp" />
-    <ClCompile Include="chromium\avc.cc" />
-    <ClCompile Include="chromium\json_web_key.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="ClearKeyGMP.cpp" />
-    <ClCompile Include="Decryptor.cpp" />
-    <ClCompile Include="json\json_reader.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="json\json_value.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="json\json_writer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="modp_b64\modp_b64.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="openssl\aes_ctr.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="openssl\aes_x86core.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="openssl\ctr128.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Storage.cpp" />
-    <ClCompile Include="VideoDecoder.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -176,9 +100,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Utils.cpp" />
-    <ClCompile Include="WMFAACDecoder.cpp" />
-    <ClCompile Include="WMFH264Decoder.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

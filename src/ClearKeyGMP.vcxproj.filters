@@ -13,134 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="OpenSSL AES">
-      <UniqueIdentifier>{34256c63-1c1a-4464-a5c4-9d514489d2ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\chromium">
-      <UniqueIdentifier>{d5e2ecf3-bb7b-4eb9-921d-c986da28cbe8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="json">
-      <UniqueIdentifier>{aab3ca2b-9ae1-4ae2-9d20-6558a40eaf74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="chromium">
-      <UniqueIdentifier>{f3a6e910-2f0e-45e8-945e-b8cdf2c59a6b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ClearKeyGMP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WMFH264Decoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gmp-task-utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoDecoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioDecoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WMFAACDecoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\aes.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\aes_locl.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\crypto.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\e_os2.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\modes.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\modes_lcl.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\opensslconf.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\opensslv.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\ossl_typ.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\safestack.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\stack.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="openssl\symhacks.h">
-      <Filter>OpenSSL AES</Filter>
-    </ClInclude>
-    <ClInclude Include="Decryptor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="chromium\avc.h">
-      <Filter>Header Files\chromium</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json_batchallocator.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\reader.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\value.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\writer.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\autolink.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\config.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\features.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\forwards.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="modp_b64\modp_b64.h">
-      <Filter>chromium</Filter>
-    </ClInclude>
-    <ClInclude Include="modp_b64\modp_b64_data.h">
-      <Filter>chromium</Filter>
-    </ClInclude>
-    <ClInclude Include="chromium\json_web_key.h">
-      <Filter>chromium</Filter>
-    </ClInclude>
-    <ClInclude Include="AsyncShutdown.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Storage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -152,56 +27,13 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WMFH264Decoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoDecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioDecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WMFAACDecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="openssl\aes_x86core.c">
-      <Filter>OpenSSL AES</Filter>
-    </ClCompile>
-    <ClCompile Include="openssl\ctr128.c">
-      <Filter>OpenSSL AES</Filter>
-    </ClCompile>
-    <ClCompile Include="openssl\aes_ctr.c">
-      <Filter>OpenSSL AES</Filter>
-    </ClCompile>
-    <ClCompile Include="Decryptor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="chromium\avc.cc">
-      <Filter>Header Files\chromium</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_reader.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_value.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
-    <ClCompile Include="json\json_writer.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
-    <ClCompile Include="modp_b64\modp_b64.cc">
-      <Filter>chromium</Filter>
-    </ClCompile>
-    <ClCompile Include="chromium\json_web_key.cpp">
-      <Filter>chromium</Filter>
-    </ClCompile>
-    <ClCompile Include="AsyncShutdown.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Storage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
