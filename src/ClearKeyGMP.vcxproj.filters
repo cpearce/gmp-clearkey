@@ -66,6 +66,9 @@
     <ClCompile Include="openaes\oaes_lib.c">
       <Filter>AES</Filter>
     </ClCompile>
+    <ClCompile Include="ClearKeyBase64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnnexB.h">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="openaes\standard.h">
       <Filter>AES</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearKeyBase64.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
