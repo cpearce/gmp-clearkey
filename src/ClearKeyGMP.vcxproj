@@ -90,6 +90,7 @@
   <ItemGroup>
     <ClCompile Include="AnnexB.cpp" />
     <ClCompile Include="AudioDecoder.cpp" />
+    <ClCompile Include="ClearKeyBase64.cpp" />
     <ClCompile Include="ClearKeyDecryptionManager.cpp" />
     <ClCompile Include="ClearKeyPersistence.cpp" />
     <ClCompile Include="ClearKeySession.cpp" />
@@ -114,6 +115,7 @@
   <ItemGroup>
     <ClInclude Include="AnnexB.h" />
     <ClInclude Include="AudioDecoder.h" />
+    <ClInclude Include="ClearKeyBase64.h" />
     <ClInclude Include="ClearKeyDecryptionManager.h" />
     <ClInclude Include="ClearKeyPersistence.h" />
     <ClInclude Include="ClearKeySession.h" />
