@@ -1,14 +1,26 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*
+ * Copyright 2015, Mozilla Foundation and contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ClearKeyStorage.h"
 #include "ClearKeyUtils.h"
 
 #include "gmp-task-utils.h"
 
-#include "mozilla/Assertions.h"
-#include "mozilla/ArrayUtils.h"
+#include <assert.h>
+#include "ArrayUtils.h"
 
 #include <vector>
 
@@ -40,7 +52,7 @@ public:
     (new WriteRecordClient(aData, aOnSuccess, aOnFailure))->Do(aRecordName);
   }
 
-  virtual void OpenComplete(GMPErr aStatus) MOZ_OVERRIDE {
+  virtual void OpenComplete(GMPErr aStatus) override {
     if (GMP_FAILED(aStatus) ||
         GMP_FAILED(mRecord->Write(&mData.front(), mData.size()))) {
       Done(mOnFailure, mOnSuccess);
@@ -49,11 +61,11 @@ public:
 
   virtual void ReadComplete(GMPErr aStatus,
                             const uint8_t* aData,
-                            uint32_t aDataSize) MOZ_OVERRIDE {
-    MOZ_ASSERT(false, "Should not reach here.");
+                            uint32_t aDataSize) override {
+    assert(false); // Should not reach here.
   }
 
-  virtual void WriteComplete(GMPErr aStatus) MOZ_OVERRIDE {
+  virtual void WriteComplete(GMPErr aStatus) override {
     if (GMP_FAILED(aStatus)) {
       Done(mOnFailure, mOnSuccess);
     } else {
@@ -115,11 +127,11 @@ public:
    */
   static void Read(const std::string& aRecordName,
                    ReadContinuation* aContinuation) {
-    MOZ_ASSERT(aContinuation);
+    assert(aContinuation);
     (new ReadRecordClient(aContinuation))->Do(aRecordName);
   }
 
-  virtual void OpenComplete(GMPErr aStatus) MOZ_OVERRIDE {
+  virtual void OpenComplete(GMPErr aStatus) override {
     auto err = aStatus;
     if (GMP_FAILED(err) ||
         GMP_FAILED(err = mRecord->Read())) {
@@ -129,12 +141,12 @@ public:
 
   virtual void ReadComplete(GMPErr aStatus,
                             const uint8_t* aData,
-                            uint32_t aDataSize) MOZ_OVERRIDE {
+                            uint32_t aDataSize) override {
     Done(aStatus, aData, aDataSize);
   }
 
-  virtual void WriteComplete(GMPErr aStatus) MOZ_OVERRIDE {
-    MOZ_ASSERT(false, "Should not reach here.");
+  virtual void WriteComplete(GMPErr aStatus) override {
+    assert(false); // Should not reach here.
   }
 
 private:
