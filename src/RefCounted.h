@@ -56,6 +56,11 @@ public:
   }
   T* operator->() const { return mPtr; }
 
+  RefPtr& operator=(T* aVal) {
+    Assign(aVal);
+    return *this;
+  }
+
 private:
   void Assign(T* aPtr) {
     if (mPtr) {
