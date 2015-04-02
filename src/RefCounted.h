@@ -48,7 +48,7 @@ protected:
 template<class T>
 class RefPtr {
 public:
-  RefPtr(T* aPtr) : mPtr(nullptr) {
+  explicit RefPtr(T* aPtr) : mPtr(nullptr) {
     Assign(aPtr);
   }
   ~RefPtr() {
