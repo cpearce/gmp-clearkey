@@ -1,5 +1,5 @@
 Name: Mozilla ClearKey
 Description: Provides decryption of ClearKey encrypted data.
 Version: 1
-APIs: decode-video[org.w3.clearkey:h264], decode-audio[org.w3.clearkey:aac], eme-decrypt-v6[org.w3.clearkey]
+APIs: decode-video[org.w3.clearkey:h264], decode-audio[org.w3.clearkey:aac], eme-decrypt-v7[org.w3.clearkey]
 Libraries: dxva2.dll, d3d9.dll, msmpeg2vdec.dll, msmpeg2adec.dll, MSAudDecMFT.dll, evr.dll, mfheaacdec.dll, mfh264dec.dll, mfplat.dll
