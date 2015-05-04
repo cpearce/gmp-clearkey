@@ -57,7 +57,7 @@ private:
   HRESULT MFToGMPSample(IMFSample* aSample,
                         GMPAudioSamples* aAudioFrame);
 
-  void MaybeRunOnMainThread(gmp_task_args_base* aTask);
+  void MaybeRunOnMainThread(GMPTask* aTask);
 
   GMPAudioHost *mHostAPI; // host-owned, invalid at DecodingComplete
   GMPAudioDecoderCallback* mCallback; // host-owned, invalid at DecodingComplete

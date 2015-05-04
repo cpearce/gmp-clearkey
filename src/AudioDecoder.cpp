@@ -279,12 +279,12 @@ AudioDecoder::DecodingComplete()
 }
 
 void
-AudioDecoder::MaybeRunOnMainThread(gmp_task_args_base* aTask)
+AudioDecoder::MaybeRunOnMainThread(GMPTask* aTask)
 {
   class MaybeRunTask : public GMPTask
   {
   public:
-    MaybeRunTask(AudioDecoder* aDecoder, gmp_task_args_base* aTask)
+    MaybeRunTask(AudioDecoder* aDecoder, GMPTask* aTask)
       : mDecoder(aDecoder), mTask(aTask)
     { }
 
@@ -305,7 +305,7 @@ AudioDecoder::MaybeRunOnMainThread(gmp_task_args_base* aTask)
 
   private:
     RefPtr<AudioDecoder> mDecoder;
-    gmp_task_args_base* mTask;
+    GMPTask* mTask;
   };
 
   GetPlatform()->runonmainthread(new MaybeRunTask(this, aTask));
