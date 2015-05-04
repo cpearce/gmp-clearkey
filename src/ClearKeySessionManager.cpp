@@ -26,7 +26,7 @@
 #include "gmp-task-utils.h"
 #if defined(ENABLE_WMF)
 #include "WMFUtils.h"
-#include <VersionHelpers.h>
+#include <versionhelpers.h>
 #endif
 
 #include <assert.h>
@@ -48,7 +48,6 @@ ClearKeySessionManager::ClearKeySessionManager()
 ClearKeySessionManager::~ClearKeySessionManager()
 {
   CK_LOGD("ClearKeySessionManager dtor %p", this);
-   assert(!mRefCount);
 }
 
 static bool
@@ -387,9 +386,9 @@ ClearKeySessionManager::Decrypt(GMPBuffer* aBuffer,
     return;
   }
 
-  mThread->Post(WrapTask(this,
-                         &ClearKeySessionManager::DoDecrypt,
-                         aBuffer, aMetadata));
+  mThread->Post(WrapTaskRefCounted(this,
+                                   &ClearKeySessionManager::DoDecrypt,
+                                   aBuffer, aMetadata));
 }
 
 void
