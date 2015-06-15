@@ -1918,7 +1918,7 @@ public:
   virtual void Run() override {
     mTask->Run();
   }
-  virtual void Destroy() {
+  virtual void Destroy() override {
     mTask->Destroy();
     gmp_task_args_base::Destroy();
   }
