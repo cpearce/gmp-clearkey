@@ -45,7 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);C:\Users\cpearce\src\mozilla\purple\content\media\gmp\gmp-api;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);C:\Users\cpearce\src\mozilla\purple\dom\media\gmp\gmp-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -73,6 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;CLEARKEYGMP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,6 +91,7 @@
   <ItemGroup>
     <ClCompile Include="AnnexB.cpp" />
     <ClCompile Include="AudioDecoder.cpp" />
+    <ClCompile Include="ClearKeyAsyncShutdown.cpp" />
     <ClCompile Include="ClearKeyBase64.cpp" />
     <ClCompile Include="ClearKeyDecryptionManager.cpp" />
     <ClCompile Include="ClearKeyPersistence.cpp" />
@@ -115,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="AnnexB.h" />
     <ClInclude Include="AudioDecoder.h" />
+    <ClInclude Include="ClearKeyAsyncShutdown.h" />
     <ClInclude Include="ClearKeyBase64.h" />
     <ClInclude Include="ClearKeyDecryptionManager.h" />
     <ClInclude Include="ClearKeyPersistence.h" />
