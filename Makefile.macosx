@@ -1,0 +1,37 @@
+CC=clang
+CXX_FLAGS=-c -O3 -Wall -std=c++11 -I../
+C_FLAGS=-c -O3 -std=gnu99
+LDFLAGS=-lstdc++ 
+CXX_SOURCES=\
+	src/AnnexB.cpp \
+	src/ClearKeyAsyncShutdown.cpp \
+	src/ClearKeyBase64.cpp \
+	src/ClearKeyDecryptionManager.cpp \
+	src/ClearKeyPersistence.cpp \
+	src/ClearKeySession.cpp \
+	src/ClearKeySessionManager.cpp \
+	src/ClearKeyStorage.cpp \
+	src/ClearKeyUtils.cpp \
+	src/gmp-clearkey.cpp
+
+C_SOURCES=src/openaes/oaes_lib.c
+
+OBJECTS=$(CXX_SOURCES:.cpp=.o) $(C_SOURCES:.c=.o)
+EXECUTABLE=libclearkey.dylib
+
+all: $(CXX_SOURCES) $(C_SOURCES) $(EXECUTABLE)
+    
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) -dynamiclib $(LDFLAGS) $(OBJECTS) -o $@
+	cp clearkey.info.macosx gmp-clearkey/devel/clearkey.info
+	cp $@ gmp-clearkey/devel/
+
+.cpp.o:
+	$(CC) $(CXX_FLAGS) $< -o $@
+.c.o:
+	$(CC) $(C_FLAGS) $< -o $@
+
+clean:
+	rm src/*.o
+	rm src/openaes/*.o
+	rm libclearkey.dylib

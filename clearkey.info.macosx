@@ -1,0 +1,4 @@
+Name: Mozilla ClearKey
+Description: Provides decryption of ClearKey encrypted data.
+Version: 1
+APIs: eme-decrypt-v7[org.w3.clearkey]
