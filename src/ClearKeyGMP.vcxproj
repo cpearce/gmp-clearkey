@@ -61,7 +61,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)\gmp-clearkey\devel\clearkey.dll</Command>
+      <Command>copy $(TargetPath) $(SolutionDir)\gmp-clearkey\devel\clearkey.dll &amp;&amp; copy $(SolutionDir)\clearkey.info.win32 $(SolutionDir)\gmp-clearkey\devel\clearkey.info</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
